@@ -1,0 +1,12 @@
+﻿@model (DisplayFieldViewModel titulo, DisplayFieldViewModel[] campos, Guid id, bool mostrarDetalhes)
+<div class="col">
+    <div class="card h-100">
+        <div class="card-body">
+            <partial name="_CardTitulo" model="@Model.titulo" />
+
+            <partial name="_CardCampos" model="@Model.campos" />
+
+            <partial name="_CardAcoes" model="(Model.id, Model.mostrarDetalhes)" />
+        </div>
+    </div>
+</div>

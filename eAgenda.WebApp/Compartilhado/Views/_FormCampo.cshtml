@@ -1,0 +1,5 @@
+﻿@model FormFieldViewModel
+<div class="form-group mb-3">
+    <label for="@Model.Name" class="form-label fw-semibold text-primary text-uppercase small">@Model.Label</label>
+    <input type="@Model.Type" id="@Model.Name" name="@Model.Name" value="@Model.Value" class="form-control" />
+</div>

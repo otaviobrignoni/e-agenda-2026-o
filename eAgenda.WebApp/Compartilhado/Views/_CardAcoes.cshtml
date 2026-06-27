@@ -1,0 +1,9 @@
+﻿@model (Guid id, bool mostrarDetalhes)
+<div class="d-flex flex-wrap gap-2 mt-auto justify-content-end">
+    <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Editar" asp-route-id="@Model.id">Editar</a>
+    <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Excluir" asp-route-id="@Model.id">Excluir</a>
+    @if (Model.mostrarDetalhes)
+    {
+        <a class="btn btn-outline-primary btn-sm rounded-pill px-3" asp-action="Detalhes" asp-route-id="@Model.id">Detalhes</a>
+    }
+</div>

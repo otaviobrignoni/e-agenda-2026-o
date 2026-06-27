@@ -1,0 +1,21 @@
+@model FormSelectViewModel
+<div class="form-group mb-3">
+    <label for="@Model.Name" class="form-label fw-semibold text-primary text-uppercase small">@Model.Label</label>
+    <select id="@Model.Name" name="@Model.Name" class="form-select">
+        @if (Model.Placeholder is not null)
+        {
+            <option value="">@Model.Placeholder</option>
+        }
+        @foreach (var option in Model.Options)
+        {
+            if (option.Value == Model.Value?.ToString())
+            {
+                <option value="@option.Value" selected>@option.Text</option>
+            }
+            else
+            {
+                <option value="@option.Value">@option.Text</option>
+            }
+        }
+    </select>
+</div>

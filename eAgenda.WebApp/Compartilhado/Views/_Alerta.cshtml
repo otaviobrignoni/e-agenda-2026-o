@@ -1,0 +1,5 @@
+﻿@model AlertaViewModel
+@{
+    string classes = Model.Erro ? "alert-danger border-danger" : "alert-primary border-primary";
+}
+<div class="alert border-start border-2 rounded-3 @classes" role="alert"> @Model.Mensagem</div>

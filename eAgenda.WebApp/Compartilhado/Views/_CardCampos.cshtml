@@ -1,0 +1,7 @@
+﻿@model DisplayFieldViewModel[]
+<dl class="row g-2 mb-4">
+    @foreach (var campo in Model)
+    {
+        <partial name="_CardCampo" model="@campo" />
+    }
+</dl>
