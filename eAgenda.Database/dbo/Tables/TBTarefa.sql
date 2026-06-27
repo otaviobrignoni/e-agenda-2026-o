@@ -4,11 +4,7 @@ CREATE TABLE [dbo].[TBTarefa] (
     [Prioridade]    INT              NOT NULL,
     [DataCriacao]   DATETIME2 (0)    NOT NULL,
     [DataConclusao] DATETIME2 (0)    NULL,
-    [EstaConcluida] BIT              NOT NULL
+    CONSTRAINT [PK_TBTarefa] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-GO
-
-ALTER TABLE [dbo].[TBTarefa]
-    ADD CONSTRAINT [PK_TBTarefa] PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
