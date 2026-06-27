@@ -3,7 +3,7 @@
   <Sdk Name="Microsoft.Build.Sql" Version="2.1.0" />
   <PropertyGroup>
     <Name>eAgenda.Database</Name>
-    <ProjectGuid>{FFF5E5CA-4A6E-45F1-9171-BFEDC6B82D00}</ProjectGuid>
+    <ProjectGuid>{031E1CF5-E24B-46F2-BE95-38763256F1C6}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
     <ModelCollation>1033, CI</ModelCollation>
   </PropertyGroup>

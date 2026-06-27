@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "eAgenda.slnx"
+    "dotnet.defaultSolution": "eAgenda.slnx",
+    "dataworkspace.excludedProjects": []
 }
