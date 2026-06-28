@@ -14,6 +14,7 @@ public record MostrarTarefaViewModel(
     DateTime? DataConclusao,
     bool EstaConcluida,
     float PercentualConcluido,
+    List<ItemTarefaViewModel> Itens,
     Guid Id
 )
 {
@@ -25,3 +26,12 @@ public record MostrarTarefaViewModel(
         _ => "bg-secondary"
     };
 };
+
+public record ItemTarefaViewModel(
+    string Titulo,
+    bool EstaConcluido
+);
+
+public record AlternarConclusaoItemViewModel(
+    string Titulo
+);

@@ -85,6 +85,48 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
 
         return rows.Select(r => new ItemTarefa(r.Titulo, tarefa, r.EstaConcluido)).ToList();
     }
+
+    public bool AdicionarItem(ItemTarefa item)
+    {
+        string sqlQuery = """
+            INSERT INTO dbo.TBItemTarefa (Titulo, EstaConcluido, TarefaId)
+            VALUES (@Titulo, @EstaConcluido, @TarefaId);
+        """;
+
+        return Execute(sqlQuery, new { item.Titulo, item.EstaConcluido, item.TarefaId }) == 1;
+    }
+
+    public bool RemoverItem(Guid tarefaId, string titulo)
+    {
+        string sqlQuery = """
+            DELETE FROM dbo.TBItemTarefa
+            WHERE TarefaId = @TarefaId AND Titulo = @Titulo;
+        """;
+
+        return Execute(sqlQuery, new { TarefaId = tarefaId, Titulo = titulo }) == 1;
+    }
+
+    public bool AlterarConclusaoItem(Guid tarefaId, string titulo, bool estaConcluido)
+    {
+        string sqlQuery = """
+            UPDATE dbo.TBItemTarefa
+            SET EstaConcluido = @EstaConcluido
+            WHERE TarefaId = @TarefaId AND Titulo = @Titulo;
+        """;
+
+        return Execute(sqlQuery, new { TarefaId = tarefaId, Titulo = titulo, EstaConcluido = estaConcluido }) == 1;
+    }
+
+    public bool AtualizarDataConclusao(Guid id, DateTime? dataConclusao)
+    {
+        string sqlQuery = """
+            UPDATE dbo.TBTarefa
+            SET DataConclusao = @DataConclusao
+            WHERE Id = @Id;
+        """;
+
+        return Execute(sqlQuery, new { Id = id, DataConclusao = dataConclusao }) == 1;
+    }
 }
 
 public class ItemTarefaRow

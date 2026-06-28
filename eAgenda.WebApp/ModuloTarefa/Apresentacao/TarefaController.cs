@@ -108,5 +108,78 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public ActionResult Detalhes(Guid id)
+        {
+            var resultado = servicoTarefa.SelecionarMostrar(id);
+
+            if (resultado.IsFailed)
+            {
+                TempData.AddErrorMessage(resultado);
+                return RedirectToAction(nameof(Index));
+            }
+
+            var vm = mapper.Map<MostrarTarefaViewModel>(resultado.Value);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult AdicionarItem(Guid id, string titulo)
+        {
+            Result resultado = servicoTarefa.AdicionarItem(id, titulo ?? string.Empty);
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id });
+        }
+
+        [HttpPost]
+        public ActionResult RemoverItem(Guid id, string titulo)
+        {
+            Result resultado = servicoTarefa.RemoverItem(id, titulo);
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id });
+        }
+
+        [HttpPost]
+        public ActionResult AlterarConclusaoItem(Guid id, string titulo, bool estaConcluido)
+        {
+            Result resultado = servicoTarefa.AlterarConclusaoItem(id, titulo, estaConcluido);
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id });
+        }
+
+        [HttpPost]
+        public ActionResult AlternarConclusaoItem(Guid id, [FromBody] AlternarConclusaoItemViewModel vm)
+        {
+            if (vm is null || string.IsNullOrWhiteSpace(vm.Titulo))
+                return BadRequest(new { mensagem = "Item da tarefa não encontrado." });
+
+            var resultado = servicoTarefa.AlternarConclusaoItem(id, vm.Titulo);
+
+            if (resultado.IsFailed)
+                return BadRequest(new { mensagem = resultado.Errors[0].Message });
+
+            var tarefa = resultado.Value;
+            var item = tarefa.Itens.First(i => i.Titulo.Equals(vm.Titulo, StringComparison.OrdinalIgnoreCase));
+
+            return Ok(new
+            {
+                item.EstaConcluido,
+                PercentualConcluido = Math.Clamp(tarefa.PercentualConcluido * 100, 0, 100),
+                ItensConcluidos = tarefa.Itens.Count(i => i.EstaConcluido),
+                TotalItens = tarefa.Itens.Count,
+                DataConclusao = tarefa.DataConclusao?.ToShortDateString() ?? "Pendente"
+            });
+        }
+
     }
 }

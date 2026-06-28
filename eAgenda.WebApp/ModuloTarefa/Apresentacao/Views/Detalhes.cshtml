@@ -1,0 +1,100 @@
+@{
+    ViewBag.Titulo = "Detalhes da Tarefa";
+
+    var percentualConcluido = Math.Clamp(Model.PercentualConcluido * 100, 0, 100);
+    var itensConcluidos = Model.Itens.Count(i => i.EstaConcluido);
+}
+
+@model MostrarTarefaViewModel
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <partial name="_Alerta" model="@new AlertaViewModel(mensagemErro, true)" />
+}
+
+<div id="mensagem-erro-item" class="alert alert-danger border-start border-2 rounded-3 d-none" role="alert"></div>
+
+<div class="row g-4" data-url-alternar-conclusao="@Url.Action("AlternarConclusaoItem", "Tarefa", new { id = Model.Id })">
+    <section class="col-12 col-lg-4">
+        <div class="card border-1 shadow-sm rounded-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h4 class="mb-1">@Model.Titulo</h4>
+                        <span class="badge rounded-pill @Model.ClassePrioridade">@Model.Prioridade</span>
+                    </div>
+
+                    <a class="btn btn-outline-secondary btn-sm rounded-pill" asp-action="Editar" asp-route-id="@Model.Id" aria-label="Editar" title="Editar">
+                        <i class="bi bi-pencil" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <dl class="row small mb-4">
+                    <dt class="col-5 text-muted">Criada</dt>
+                    <dd class="col-7 text-end">@Model.DataCriacao.ToShortDateString()</dd>
+
+                    <dt class="col-5 text-muted">Concluída</dt>
+                    <dd id="data-conclusao" class="col-7 text-end">@(Model.DataConclusao?.ToShortDateString() ?? "Pendente")</dd>
+
+                    <dt class="col-5 text-muted">Itens</dt>
+                    <dd id="contador-itens" class="col-7 text-end">@itensConcluidos de @Model.Itens.Count</dd>
+                </dl>
+
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Progresso</span>
+                        <span id="percentual-concluido">@percentualConcluido.ToString("0", CultureInfo.CurrentCulture)%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div id="barra-progresso" class="progress-bar" role="progressbar" style="width: @percentualConcluido.ToString("0.##", CultureInfo.InvariantCulture)%" aria-valuenow="@percentualConcluido.ToString("0.##", CultureInfo.InvariantCulture)" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="col-12 col-lg-8">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <h5 class="mb-0">Itens da tarefa</h5>
+            <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Index">Voltar</a>
+        </div>
+
+        <form class="card border-primary-subtle shadow-sm rounded-4 mb-3" asp-action="AdicionarItem" asp-route-id="@Model.Id" method="post">
+            <div class="card-body">
+                <label for="titulo" class="form-label fw-semibold text-primary text-uppercase small">Novo item</label>
+                <div class="input-group">
+                    <input id="titulo" name="titulo" type="text" class="form-control" maxlength="100" placeholder="Descreva o item" />
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
+                        Adicionar
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        @if (Model.Itens.Count == 0)
+        {
+            <partial name="_Alerta" model="@(new AlertaViewModel("Nenhum item cadastrado para esta tarefa."))" />
+        }
+        else
+        {
+            <div class="list-group shadow-sm rounded-4">
+                @foreach (var item in Model.Itens)
+                {
+                    <div class="list-group-item d-flex align-items-center gap-3 py-3">
+                        <button class="btn @(item.EstaConcluido ? "btn-success" : "btn-outline-secondary") btn-sm rounded-circle" type="button" data-botao-conclusao data-titulo="@item.Titulo" aria-label="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")" title="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")"> <i class="bi @(item.EstaConcluido ? "bi-check-lg" : "bi-circle")" aria-hidden="true"></i> </button>
+                        <div class="flex-grow-1 @(item.EstaConcluido ? "text-decoration-line-through text-muted" : "")" data-titulo-item> @item.Titulo </div>
+                        <form asp-action="RemoverItem" asp-route-id="@Model.Id" method="post" class="m-0">
+                            <input type="hidden" name="titulo" value="@item.Titulo" />
+                            <button class="btn btn-outline-danger btn-sm rounded-pill" type="submit" aria-label="Remover item" title="Remover item"> <i class="bi bi-trash" aria-hidden="true"></i> </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/tarefa-detalhes.js" asp-append-version="true"></script>
+}
