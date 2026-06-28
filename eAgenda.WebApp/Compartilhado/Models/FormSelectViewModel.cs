@@ -8,4 +8,4 @@ public record FormSelectViewModel(
     object? Value,
     IEnumerable<SelectListItem> Options,
     string? Placeholder = null
-) : IViewModel;
+);
