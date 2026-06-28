@@ -7,7 +7,7 @@ namespace eAgenda.WebApp.ModuloTarefa.Infra;
 
 public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper mapper) : RepositorioSql<Tarefa, Tarefa>(connectionFactory, mapper), IRepositorioTarefa
 {
-    public List<Tarefa> Registros => throw new NotImplementedException();
+    public List<Tarefa> Registros => Selecionar();
 
     public void Cadastrar(Tarefa tarefa)
     {
