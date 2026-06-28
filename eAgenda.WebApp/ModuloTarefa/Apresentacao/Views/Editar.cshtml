@@ -1,0 +1,10 @@
+﻿@{
+    ViewBag.Titulo = "Edição de Tarefa";
+}
+
+@model TarefaViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-action="Editar" asp-route-id="@Model.Id" method="post">
+    <partial name="_FormTarefa" model="Model" />
+    <partial name="_FormAcoes" />
+</form>
