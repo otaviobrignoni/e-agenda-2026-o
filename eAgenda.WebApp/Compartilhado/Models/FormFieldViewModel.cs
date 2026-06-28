@@ -5,4 +5,4 @@ public record FormFieldViewModel(
     string Label,
     object? Value,
     string Type
-);
+) : IViewModel;

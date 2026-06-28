@@ -6,7 +6,7 @@ namespace eAgenda.WebApp.Compartilhado.Extensions;
 
 public static class ViewModelExtensions
 {
-    public static FormFieldViewModel ConvertToFormField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string type, string? label = null)
+    public static FormFieldViewModel ConvertToFormField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string type, string? label = null) where TModel : IViewModel
     {
         var name = GetMemberName(expression.Body) ?? throw new ArgumentException($"Could not determine the field name from expression '{expression}'.", nameof(expression));
         var value = expression.Compile()(model);
@@ -14,7 +14,7 @@ public static class ViewModelExtensions
         return new FormFieldViewModel(name, label ?? name, value, type);
     }
 
-    public static FormSelectViewModel ConvertToFormSelect<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, IEnumerable<SelectListItem> options, string? label = null, string? placeholder = null)
+    public static FormSelectViewModel ConvertToFormSelect<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, IEnumerable<SelectListItem> options, string? label = null, string? placeholder = null) where TModel : IViewModel
     {
         var name = GetMemberName(expression.Body) ?? throw new ArgumentException($"Could not determine the field name from expression '{expression}'.", nameof(expression));
         var value = expression.Compile()(model);
@@ -22,7 +22,7 @@ public static class ViewModelExtensions
         return new FormSelectViewModel(name, label ?? name, value, options, placeholder);
     }
 
-    public static DisplayFieldViewModel DisplayField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string? label = null)
+    public static DisplayFieldViewModel DisplayField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string? label = null) where TModel : IViewModel
     {
         var name = GetMemberName(expression.Body);
         if (name is null && label is null)
