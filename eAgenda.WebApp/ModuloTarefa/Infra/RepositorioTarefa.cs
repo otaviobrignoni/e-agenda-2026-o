@@ -68,4 +68,29 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
 
         return Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
     }
+    public List<ItemTarefa> SelecionarItens(Guid id)
+    {
+        string sqlQuery = """
+            SELECT Titulo, EstaConcluido, TarefaId
+            FROM dbo.TBItemTarefa
+            WHERE TarefaId = @Id
+            ORDER BY Titulo;
+        """;
+        var tarefa = Selecionar(id);
+
+        if (tarefa is null)
+            return [];
+
+        var rows = Query<ItemTarefaRow>(sqlQuery, id).ToList();
+
+        return rows.Select(r => new ItemTarefa(r.Titulo, tarefa, r.EstaConcluido)).ToList();
+    }
 }
+
+public class ItemTarefaRow
+{
+    public string Titulo { get; set; } = string.Empty;
+    public bool EstaConcluido { get; set; }
+    public Guid TarefaId { get; set; }
+}
+

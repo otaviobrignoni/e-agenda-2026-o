@@ -23,12 +23,11 @@
     <Folder Include="Compartilhado\Infra\" />
     <Folder Include="Compartilhado\Logging\" />
     <Folder Include="Compartilhado\Mapping\" />
-    <Folder Include="Compartilhado\Models\" />
     <Folder Include="Compartilhado\Views\" />
     <Folder Include="ModuloHome\" />
     <Folder Include="ModuloHome\Views\" />
     <Folder Include="ModuloTarefa\Aplicacao\" />
-    <Folder Include="ModuloTarefa\Apresentacao\" />
+    <Folder Include="ModuloTarefa\Apresentacao\Views\" />
     <Folder Include="ModuloTarefa\Infra\" />
   </ItemGroup>
 
