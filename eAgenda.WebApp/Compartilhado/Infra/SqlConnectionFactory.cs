@@ -9,10 +9,10 @@ public sealed class SqlConnectionFactory(IConfiguration config) : ISqlConnection
     public SqlConnection CreateConnection()
     {
         string? connectionString = config.GetConnectionString(NomeConnectionString);
-        
+
         if (string.IsNullOrEmpty(connectionString))
             throw new InvalidOperationException($"ConnectionString {NomeConnectionString} não encontrada");
-        
+
         return new SqlConnection(connectionString);
     }
 }
