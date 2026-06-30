@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using eAgenda.WebApp.ModuloTarefa.Dominio;
 
 namespace eAgenda.WebApp.ModuloTarefa.Apresentacao;
 
 public record TarefaViewModel(
+    [Required(ErrorMessage = "O campo \"Título\" deve ser preenchido")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage =" O campo \"Título\" deve conter entre 2 e 100 caracteres.")]
     string Titulo,
+    [Required(ErrorMessage = "O campo \"Prioridade\" deve ser preenchido")]
     PrioridadeTarefa Prioridade,
     Guid Id = default
 );
