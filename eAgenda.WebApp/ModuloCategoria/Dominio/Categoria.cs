@@ -4,17 +4,14 @@ namespace eAgenda.WebApp.ModuloCategoria.Dominio;
 
 public class Categoria : EntidadeBase<Categoria>
 {
-
-    public Categoria(Parameters)
+    public string Titulo { get; set; } = string.Empty;
+    public Categoria() { }
+    public Categoria(string titulo)
     {
-
-    }
-    public Categoria(Parameters)
-    {
-
+        Titulo = titulo;
     }
     public override void Atualizar(Categoria entidadeAtualizada)
     {
-        throw new NotImplementedException();
+        Titulo = entidadeAtualizada.Titulo;
     }
 }
