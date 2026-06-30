@@ -3,4 +3,4 @@
     <label for="@Model.Name" class="form-label fw-semibold text-primary text-uppercase small">@Model.Label</label>
     <input type="@Model.Type" id="@Model.Name" name="@Model.Name" value="@Model.Value" class="form-control" />
 </div>
-<span class="text-danger field-validation-valid" data-valmsg-for="@Model.Name" data-valmsg-replace="true"></span>
+@Html.ValidationMessage(Model.Name, "", new { @class = "text-danger small fw-semibold field-validation-error" })
