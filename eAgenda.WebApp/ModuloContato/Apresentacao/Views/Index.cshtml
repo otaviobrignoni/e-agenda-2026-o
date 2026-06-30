@@ -21,7 +21,6 @@ else
         @foreach (var p in Model)
         {
             var campos = new[] {
-                p.DisplayField(vm => vm.Nome),
                 p.DisplayField(vm => vm.Telefone),
                 p.DisplayField(vm => vm.Email),
                 p.DisplayField(vm => vm.Cargo),

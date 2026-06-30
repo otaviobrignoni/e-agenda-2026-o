@@ -1,10 +1,10 @@
 ﻿@{
-    ViewBag.Titulo = "Edição de Paciente";
+    ViewBag.Titulo = "Edição de Contato";
 }
 
 @model ContatoViewModel;
 
 <form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-action="Editar" asp-route-id="@Model.Id" method="post">
-    <partial name="_FormPaciente" model="Model" />
+    <partial name="_FormContato" model="Model" />
     <partial name="_FormAcoes" />
 </form>

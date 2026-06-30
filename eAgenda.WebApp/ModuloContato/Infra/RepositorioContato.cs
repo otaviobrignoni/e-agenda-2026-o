@@ -34,7 +34,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
                 Email = @Email,
                 Telefone = @Telefone,
                 Cargo = @Cargo,
-                Empresa = @Empresa,
+                Empresa = @Empresa
         """;
 
         return Execute(sqlQuery, registroEditado) == 1;
@@ -43,7 +43,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
     public bool Excluir(Guid id)
     {
         string sqlQuery = """
-            DELETE FROM dbo.TBContato;
+            DELETE FROM dbo.TBContato
             WHERE Id = @Id;
         """;
 
