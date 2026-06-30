@@ -25,6 +25,12 @@
     <Folder Include="Compartilhado\Mapping\" />
     <Folder Include="Compartilhado\Models\" />
     <Folder Include="Compartilhado\Views\" />
+    <Folder Include="ModuloCategoria\" />
+    <Folder Include="ModuloCategoria\Aplicacao\" />
+    <Folder Include="ModuloCategoria\Apresentacao\" />
+    <Folder Include="ModuloCategoria\Apresentacao\Views\" />
+    <Folder Include="ModuloCategoria\Dominio\" />
+    <Folder Include="ModuloCategoria\Infra\" />
     <Folder Include="ModuloContato\Dominio\" />
     <Folder Include="ModuloContato\Infra\" />
     <Folder Include="ModuloHome\" />
