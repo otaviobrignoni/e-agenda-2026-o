@@ -1,0 +1,7 @@
+﻿@model ContatoViewModel
+<input type="hidden" asp-for="Id" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Nome, "text")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Email, "email")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Telefone, "text")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Cargo, "text")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Empresa, "text")" />
