@@ -1,8 +1,7 @@
-using System;
-
 namespace eAgenda.WebApp.ModuloCategoria.Aplicacao;
 
-public class CategoriaDto
-{
-
-}
+public record CategoriaDto
+(
+    string Titulo,
+    Guid Id
+);
