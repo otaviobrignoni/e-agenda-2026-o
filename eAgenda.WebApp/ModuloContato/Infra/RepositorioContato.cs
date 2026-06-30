@@ -53,7 +53,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
     public Contato? Selecionar(Guid id)
     {
         string sqlQuery = """
-            SELECT Id, Titulo, Prioridade, DataCriacao, DataConclusao
+            SELECT Id, Nome, Email, Telefone, Cargo, Empresa 
             FROM dbo.TBContato
             ORDER BY Nome;
         """;
@@ -64,7 +64,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
     public List<Contato> Selecionar(Func<Contato, bool>? filtro = null)
     {
         string sqlQuery = """
-            SELECT Id, Titulo, Prioridade, DataCriacao, DataConclusao
+            SELECT Id, Nome, Email, Telefone, Cargo, Empresa 
             FROM dbo.TBContato
             ORDER BY Nome;
         """;
