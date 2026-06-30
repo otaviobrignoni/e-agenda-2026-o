@@ -7,6 +7,9 @@ public class ServicoCategoria(IRepositorioCategoria repositorioCategoria)
 {
     public Result Cadastrar(CategoriaDto dto)
     {
+        if (repositorioCategoria.Selecionar().Any(c => c.Titulo == dto.Titulo))
+            return Falha("Titulo", "Já existe uma categoria com esse titulo");
+
         var categoria = new Categoria(dto.Titulo);
         repositorioCategoria.Cadastrar(categoria);
         return Result.Ok();
@@ -40,5 +43,10 @@ public class ServicoCategoria(IRepositorioCategoria repositorioCategoria)
         {
             return new CategoriaDto(t.Titulo, t.Id);
         }).ToList();
+    }
+
+    private static Result Falha(string campo, string mensagem)
+    {
+        return Result.Fail(new Error(mensagem).WithMetadata("Campo", campo));
     }
 }
