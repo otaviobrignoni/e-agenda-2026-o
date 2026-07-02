@@ -15,9 +15,6 @@ public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositori
         if (tarefa is null)
             return Result.Fail("Tarefa não encontrada.");
 
-        if (tarefa.Itens.Any(i => i.Titulo.Equals(dto.Titulo, StringComparison.OrdinalIgnoreCase)))
-            return Result.Fail("Já existe um item com este título nesta tarefa.");
-
         var item = new ItemTarefa(dto.Titulo, tarefa);
 
         repositorioItemTarefa.Cadastrar(item);
@@ -56,12 +53,25 @@ public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositori
         if (tarefa is null)
             return Result.Fail("Tarefa não encontrada.");
 
-        foreach (var dto in itens)
+        var idsSubmetidos = itens.Select(i => i.Id).Where(id => id != Guid.Empty).ToHashSet();
+
+        foreach (var item in tarefa.Itens.Where(i => !idsSubmetidos.Contains(i.Id)).ToList())
+        {
+            repositorioItemTarefa.Excluir(item);
+            tarefa.RemoverItem(item);
+        }
+
+        foreach (var dto in itens.Where(i => i.Id == Guid.Empty))
+        {
+            var novoItem = new ItemTarefa(dto.Titulo, tarefa, dto.EstaConcluido);
+            repositorioItemTarefa.Cadastrar(novoItem);
+            tarefa.AdicionarItem(novoItem);
+        }
+
+        foreach (var dto in itens.Where(i => i.Id != Guid.Empty))
         {
             var item = tarefa.Itens.FirstOrDefault(i => i.Id == dto.Id);
-
             if (item is null) continue;
-
             item.Atualizar(new ItemTarefa(item.Titulo, item.Tarefa, dto.EstaConcluido));
             repositorioItemTarefa.Editar(item);
         }

@@ -50,60 +50,50 @@
             </div>
         </div>
     </section>
-
     <section class="col-12 col-lg-8">
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
             <h5 class="mb-0">Itens da tarefa</h5>
             <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Index">Voltar</a>
         </div>
-
-        <form class="card border-primary-subtle shadow-sm rounded-4 mb-3" asp-action="AdicionarItem" asp-route-tarefaId="@Model.Id" method="post">
+        <div class="card border-primary-subtle shadow-sm rounded-4 mb-3">
             <div class="card-body">
                 <label for="Titulo" class="form-label fw-semibold text-primary text-uppercase small">Novo item</label>
                 <div class="input-group">
-                    <input id="Titulo" name="Titulo" type="text" class="form-control" maxlength="100" placeholder="Descreva o item" />
-                    <button class="btn btn-primary" type="submit">
+                    <input id="Titulo" type="text" class="form-control" maxlength="100" placeholder="Descreva o item" />
+                    <button class="btn btn-primary" type="button" id="btn-adicionar">
                         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
                         Adicionar
                     </button>
                 </div>
             </div>
+        </div>
+        <form id="form-editar-itens" asp-action="EditarItens" method="post">
+            <input type="hidden" name="TarefaId" value="@Model.Id" />
         </form>
-
         @if (Model.Itens.Count == 0)
         {
             <partial name="_Alerta" model="@(new AlertaViewModel("Nenhum item cadastrado para esta tarefa."))" />
         }
-        else
-        {
-            <form id="form-editar-itens" asp-action="EditarItens" method="post">
-                <input type="hidden" name="TarefaId" value="@Model.Id" />
-            </form>
-
-            <div class="list-group shadow-sm rounded-4 mb-3">
-                @for (int i = 0; i < Model.Itens.Count; i++)
-                {
-                    var item = Model.Itens[i];
-                    <div class="list-group-item d-flex align-items-center gap-3 py-3" data-item>
-                        <input type="hidden" name="Itens[@i].Id" value="@item.Id" form="form-editar-itens" />
-                        <input type="hidden" name="Itens[@i].TarefaId" value="@Model.Id" form="form-editar-itens" />
-                        <input type="hidden" name="Itens[@i].Titulo" value="@item.Titulo" form="form-editar-itens" />
-                        <input type="hidden" name="Itens[@i].EstaConcluido" value="@item.EstaConcluido.ToString().ToLower()" form="form-editar-itens" data-item-concluido />
-                        <button class="btn @(item.EstaConcluido ? "btn-success" : "btn-outline-secondary") btn-sm rounded-circle" type="button" data-botao-conclusao aria-label="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")" title="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")"><i class="bi @(item.EstaConcluido ? "bi-check-lg" : "bi-circle")" aria-hidden="true"></i></button>
-                        <div class="flex-grow-1 @(item.EstaConcluido ? "text-decoration-line-through text-muted" : "")" data-titulo-item>@item.Titulo</div>
-                        <form asp-action="RemoverItem" asp-route-tarefaId="@Model.Id" method="post" class="m-0">
-                            <input type="hidden" name="Id" value="@item.Id" />
-                            <button class="btn btn-outline-danger btn-sm rounded-pill" type="submit" aria-label="Remover item" title="Remover item"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                        </form>
-                    </div>
-                }
-            </div>
-
-            <button type="submit" form="form-editar-itens" class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-check2-all me-1" aria-hidden="true"></i>
-                Salvar alterações
-            </button>
-        }
+        <div class="list-group shadow-sm rounded-4 mb-3" id="lista-itens">
+            @foreach (var item in Model.Itens)
+            {
+                var key = item.Id.ToString();
+                <div class="list-group-item d-flex align-items-center gap-3 py-3" data-item>
+                    <input type="hidden" name="Itens.Index" value="@key" form="form-editar-itens" />
+                    <input type="hidden" name="Itens[@key].Id" value="@item.Id" form="form-editar-itens" />
+                    <input type="hidden" name="Itens[@key].TarefaId" value="@Model.Id" form="form-editar-itens" />
+                    <input type="hidden" name="Itens[@key].Titulo" value="@item.Titulo" form="form-editar-itens" />
+                    <input type="hidden" name="Itens[@key].EstaConcluido" value="@item.EstaConcluido.ToString().ToLower()" form="form-editar-itens" data-item-concluido />
+                    <button class="btn @(item.EstaConcluido ? "btn-success" : "btn-outline-secondary") btn-sm rounded-circle" type="button" data-botao-conclusao aria-label="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")" title="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")"><i class="bi @(item.EstaConcluido ? "bi-check-lg" : "bi-circle")" aria-hidden="true"></i></button>
+                    <div class="flex-grow-1 @(item.EstaConcluido ? "text-decoration-line-through text-muted" : "")" data-titulo-item>@item.Titulo</div>
+                    <button class="btn btn-outline-danger btn-sm rounded-pill" type="button" data-botao-remover aria-label="Remover item" title="Remover item"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+            }
+        </div>
+        <button type="submit" form="form-editar-itens" class="btn btn-primary rounded-pill px-4 d-none">
+            <i class="bi bi-check2-all me-1" aria-hidden="true"></i>
+            Salvar alterações
+        </button>
     </section>
 </div>
 
