@@ -1,0 +1,10 @@
+﻿@{
+    ViewBag.Titulo = "Cadastro de Categoria";
+}
+
+@model CategoriaViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-action="Cadastrar" method="post">
+    <partial name="_FormCategoria" model="Model" />
+    <partial name="_FormAcoes" />
+</form>

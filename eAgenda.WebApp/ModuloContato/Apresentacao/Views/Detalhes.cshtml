@@ -1,0 +1,15 @@
+﻿@{
+    var campos = new[] {
+        Model.DisplayField(vm => vm.Id, "ID"),
+    };
+}
+
+@model ContatoViewModel
+
+<div class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;">
+    <partial name="_CardTitulo" model="@(Model.DisplayField(vm => vm.Id.ToShortString(), Model.Nome))" />
+    <partial name="_CardCampos" model="@campos" />
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Listar">Voltar</a>
+    </div>
+</div>

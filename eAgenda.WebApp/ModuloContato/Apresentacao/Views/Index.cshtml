@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Titulo = "Listagem de Contatos";
+}
+
+@model List<ContatoViewModel>;
+
+<partial name="_BotaoCadastrar" />
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <partial name="_Alerta" model="@new AlertaViewModel(mensagemErro, true)" />
+}
+@if (Model.Count == 0)
+{
+    <partial name="_Alerta" model="@(new AlertaViewModel("Nenhum contato cadastrado."))" />
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2">
+        @foreach (var p in Model)
+        {
+            var campos = new[] {
+                p.DisplayField(vm => vm.Telefone),
+                p.DisplayField(vm => vm.Email),
+                p.DisplayField(vm => vm.Cargo),
+                p.DisplayField(vm => vm.Empresa)
+            };
+            <partial name="_Card" model="(p.DisplayField(vm => vm.Id.ToShortString(), p.Nome), campos, p.Id, false)" />
+        }
+    </div>
+}

@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Titulo = "Exclusão de Contato";
+    var campos = new[] {
+        Model.DisplayField(vm => vm.Id, "ID"),
+        Model.DisplayField(vm => vm.Nome),
+        Model.DisplayField(vm => vm.Email),
+        Model.DisplayField(vm => vm.Telefone),
+        Model.DisplayField(vm => vm.Cargo),
+        Model.DisplayField(vm => vm.Empresa)
+    };
+}
+
+@model ContatoViewModel;
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-action="Excluir" asp-route-id="@Model.Id" method="post">
+    <partial name="_Alerta" model="@(new AlertaViewModel("Tem certeza que deseja excluir este contato?"))" />
+    <partial name="_CardCampos" model="@campos" />
+    <partial name="_FormAcoes" />
+</form>
