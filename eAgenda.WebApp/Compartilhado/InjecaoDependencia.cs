@@ -44,6 +44,7 @@ public static class InjecaoDependencia
 
         //services.AddScoped<IRepositorio(*), Repositorio(*)>();
         services.AddScoped<IRepositorioTarefa, RepositorioTarefa>();
+        services.AddScoped<IRepositorioItemTarefa, RepositorioItemTarefa>();
     }
 
     // Camada de Aplicação
@@ -53,5 +54,6 @@ public static class InjecaoDependencia
 
         //services.AddScoped<Servico(*)>();
         services.AddScoped<ServicoTarefa>();
+        services.AddScoped<ServicoItemTarefa>();
     }
 }

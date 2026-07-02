@@ -5,7 +5,7 @@ using eAgenda.WebApp.ModuloTarefa.Dominio;
 
 namespace eAgenda.WebApp.ModuloTarefa.Infra;
 
-public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper mapper) : RepositorioSql<Tarefa, Tarefa>(connectionFactory, mapper), IRepositorioTarefa
+public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper mapper, IRepositorioItemTarefa repositorioItemTarefa) : RepositorioSql<Tarefa, Tarefa>(connectionFactory, mapper), IRepositorioTarefa
 {
     public List<Tarefa> Registros => Selecionar();
 
@@ -55,7 +55,12 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
             WHERE Id = @Id;
         """;
 
-        return QuerySingle(sqlQuery, id);
+        var tarefa = QuerySingle(sqlQuery, id);
+
+        if (tarefa is not null)
+            tarefa.Itens = repositorioItemTarefa.Selecionar(tarefa);
+
+        return tarefa;
     }
 
     public List<Tarefa> Selecionar(Func<Tarefa, bool>? filtro = null)
@@ -66,73 +71,11 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
             ORDER BY Titulo;
         """;
 
-        return Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
-    }
-    public List<ItemTarefa> SelecionarItens(Guid id)
-    {
-        string sqlQuery = """
-            SELECT Titulo, EstaConcluido, TarefaId
-            FROM dbo.TBItemTarefa
-            WHERE TarefaId = @Id
-            ORDER BY Titulo;
-        """;
-        var tarefa = Selecionar(id);
+        var tarefas = Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
 
-        if (tarefa is null)
-            return [];
+        foreach (var tarefa in tarefas)
+            tarefa.Itens = repositorioItemTarefa.Selecionar(tarefa);
 
-        var rows = Query<ItemTarefaRow>(sqlQuery, id).ToList();
-
-        return rows.Select(r => new ItemTarefa(r.Titulo, tarefa, r.EstaConcluido)).ToList();
-    }
-
-    public bool AdicionarItem(ItemTarefa item)
-    {
-        string sqlQuery = """
-            INSERT INTO dbo.TBItemTarefa (Titulo, EstaConcluido, TarefaId)
-            VALUES (@Titulo, @EstaConcluido, @TarefaId);
-        """;
-
-        return Execute(sqlQuery, new { item.Titulo, item.EstaConcluido, item.TarefaId }) == 1;
-    }
-
-    public bool RemoverItem(Guid tarefaId, string titulo)
-    {
-        string sqlQuery = """
-            DELETE FROM dbo.TBItemTarefa
-            WHERE TarefaId = @TarefaId AND Titulo = @Titulo;
-        """;
-
-        return Execute(sqlQuery, new { TarefaId = tarefaId, Titulo = titulo }) == 1;
-    }
-
-    public bool AlterarConclusaoItem(Guid tarefaId, string titulo, bool estaConcluido)
-    {
-        string sqlQuery = """
-            UPDATE dbo.TBItemTarefa
-            SET EstaConcluido = @EstaConcluido
-            WHERE TarefaId = @TarefaId AND Titulo = @Titulo;
-        """;
-
-        return Execute(sqlQuery, new { TarefaId = tarefaId, Titulo = titulo, EstaConcluido = estaConcluido }) == 1;
-    }
-
-    public bool AtualizarDataConclusao(Guid id, DateTime? dataConclusao)
-    {
-        string sqlQuery = """
-            UPDATE dbo.TBTarefa
-            SET DataConclusao = @DataConclusao
-            WHERE Id = @Id;
-        """;
-
-        return Execute(sqlQuery, new { Id = id, DataConclusao = dataConclusao }) == 1;
+        return tarefas;
     }
 }
-
-public class ItemTarefaRow
-{
-    public string Titulo { get; set; } = string.Empty;
-    public bool EstaConcluido { get; set; }
-    public Guid TarefaId { get; set; }
-}
-

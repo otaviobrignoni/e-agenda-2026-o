@@ -28,11 +28,13 @@ public class Tarefa : EntidadeBase<Tarefa>
     public void AdicionarItem(ItemTarefa item)
     {
         Itens.Add(item);
+        AtualizarDataConclusao();
     }
 
     public void RemoverItem(ItemTarefa item)
     {
         Itens.Remove(item);
+        AtualizarDataConclusao();
     }
 
     public void AtualizarDataConclusao()

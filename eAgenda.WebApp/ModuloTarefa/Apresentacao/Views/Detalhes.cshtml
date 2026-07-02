@@ -12,9 +12,7 @@
     <partial name="_Alerta" model="@new AlertaViewModel(mensagemErro, true)" />
 }
 
-<div id="mensagem-erro-item" class="alert alert-danger border-start border-2 rounded-3 d-none" role="alert"></div>
-
-<div class="row g-4" data-url-alternar-conclusao="@Url.Action("AlternarConclusaoItem", "Tarefa", new { id = Model.Id })">
+<div class="row g-4">
     <section class="col-12 col-lg-4">
         <div class="card border-1 shadow-sm rounded-4">
             <div class="card-body">
@@ -59,11 +57,11 @@
             <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Index">Voltar</a>
         </div>
 
-        <form class="card border-primary-subtle shadow-sm rounded-4 mb-3" asp-action="AdicionarItem" asp-route-id="@Model.Id" method="post">
+        <form class="card border-primary-subtle shadow-sm rounded-4 mb-3" asp-action="AdicionarItem" asp-route-tarefaId="@Model.Id" method="post">
             <div class="card-body">
-                <label for="titulo" class="form-label fw-semibold text-primary text-uppercase small">Novo item</label>
+                <label for="Titulo" class="form-label fw-semibold text-primary text-uppercase small">Novo item</label>
                 <div class="input-group">
-                    <input id="titulo" name="titulo" type="text" class="form-control" maxlength="100" placeholder="Descreva o item" />
+                    <input id="Titulo" name="Titulo" type="text" class="form-control" maxlength="100" placeholder="Descreva o item" />
                     <button class="btn btn-primary" type="submit">
                         <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
                         Adicionar
@@ -78,19 +76,33 @@
         }
         else
         {
-            <div class="list-group shadow-sm rounded-4">
-                @foreach (var item in Model.Itens)
+            <form id="form-editar-itens" asp-action="EditarItens" method="post">
+                <input type="hidden" name="TarefaId" value="@Model.Id" />
+            </form>
+
+            <div class="list-group shadow-sm rounded-4 mb-3">
+                @for (int i = 0; i < Model.Itens.Count; i++)
                 {
-                    <div class="list-group-item d-flex align-items-center gap-3 py-3">
-                        <button class="btn @(item.EstaConcluido ? "btn-success" : "btn-outline-secondary") btn-sm rounded-circle" type="button" data-botao-conclusao data-titulo="@item.Titulo" aria-label="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")" title="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")"> <i class="bi @(item.EstaConcluido ? "bi-check-lg" : "bi-circle")" aria-hidden="true"></i> </button>
-                        <div class="flex-grow-1 @(item.EstaConcluido ? "text-decoration-line-through text-muted" : "")" data-titulo-item> @item.Titulo </div>
-                        <form asp-action="RemoverItem" asp-route-id="@Model.Id" method="post" class="m-0">
-                            <input type="hidden" name="titulo" value="@item.Titulo" />
-                            <button class="btn btn-outline-danger btn-sm rounded-pill" type="submit" aria-label="Remover item" title="Remover item"> <i class="bi bi-trash" aria-hidden="true"></i> </button>
+                    var item = Model.Itens[i];
+                    <div class="list-group-item d-flex align-items-center gap-3 py-3" data-item>
+                        <input type="hidden" name="Itens[@i].Id" value="@item.Id" form="form-editar-itens" />
+                        <input type="hidden" name="Itens[@i].TarefaId" value="@Model.Id" form="form-editar-itens" />
+                        <input type="hidden" name="Itens[@i].Titulo" value="@item.Titulo" form="form-editar-itens" />
+                        <input type="hidden" name="Itens[@i].EstaConcluido" value="@item.EstaConcluido.ToString().ToLower()" form="form-editar-itens" data-item-concluido />
+                        <button class="btn @(item.EstaConcluido ? "btn-success" : "btn-outline-secondary") btn-sm rounded-circle" type="button" data-botao-conclusao aria-label="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")" title="@(item.EstaConcluido ? "Reabrir item" : "Concluir item")"><i class="bi @(item.EstaConcluido ? "bi-check-lg" : "bi-circle")" aria-hidden="true"></i></button>
+                        <div class="flex-grow-1 @(item.EstaConcluido ? "text-decoration-line-through text-muted" : "")" data-titulo-item>@item.Titulo</div>
+                        <form asp-action="RemoverItem" asp-route-tarefaId="@Model.Id" method="post" class="m-0">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <button class="btn btn-outline-danger btn-sm rounded-pill" type="submit" aria-label="Remover item" title="Remover item"><i class="bi bi-trash" aria-hidden="true"></i></button>
                         </form>
                     </div>
                 }
             </div>
+
+            <button type="submit" form="form-editar-itens" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-check2-all me-1" aria-hidden="true"></i>
+                Salvar alterações
+            </button>
         }
     </section>
 </div>

@@ -8,14 +8,14 @@ public abstract record TarefaDtoBase(
     Guid Id
 );
 
-public record class TarefaDto : TarefaDtoBase
+public record TarefaDto : TarefaDtoBase
 {
     public TarefaDto(string titulo, PrioridadeTarefa prioridade, Guid id = default) : base(titulo, prioridade, id) { }
 }
 
-public record class MostrarTarefaDto : TarefaDtoBase
+public record MostrarTarefaDto : TarefaDtoBase
 {
-    public MostrarTarefaDto(string titulo, PrioridadeTarefa prioridade, DateTime dataCriacao, DateTime? dataConclusao, bool estaConcluida, float percentualConcluido, List<ItemTarefa> itens, Guid id = default) : base(titulo, prioridade, id)
+    public MostrarTarefaDto(string titulo, PrioridadeTarefa prioridade, DateTime dataCriacao, DateTime? dataConclusao, bool estaConcluida, float percentualConcluido, List<ItemTarefaDto> itens, Guid id = default) : base(titulo, prioridade, id)
     {
         DataCriacao = dataCriacao;
         DataConclusao = dataConclusao;
@@ -27,5 +27,13 @@ public record class MostrarTarefaDto : TarefaDtoBase
     public DateTime? DataConclusao { get; set; }
     public bool EstaConcluida { get; set; }
     public float PercentualConcluido { get; set; }
-    public List<ItemTarefa> Itens { get; set; }
+    public List<ItemTarefaDto> Itens { get; set; }
 }
+
+public record ItemTarefaDto(
+    Guid Id,
+    string Titulo,
+    bool EstaConcluido,
+    Guid TarefaId
+);
+

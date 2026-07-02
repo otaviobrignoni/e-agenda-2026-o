@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
 {
-    public class TarefaController(ServicoTarefa servicoTarefa, IMapper mapper) : Controller
+    public class TarefaController(ServicoTarefa servicoTarefa, ServicoItemTarefa servicoItemTarefa, IMapper mapper) : Controller
     {
         [HttpGet]
         public ActionResult Index()
@@ -125,61 +125,46 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
         }
 
         [HttpPost]
-        public ActionResult AdicionarItem(Guid id, string titulo)
+        public ActionResult AdicionarItem(ItemTarefaViewModel vm)
         {
-            Result resultado = servicoTarefa.AdicionarItem(id, titulo ?? string.Empty);
-
-            if (resultado.IsFailed)
-                TempData.AddErrorMessage(resultado);
-
-            return RedirectToAction(nameof(Detalhes), new { id });
-        }
-
-        [HttpPost]
-        public ActionResult RemoverItem(Guid id, string titulo)
-        {
-            Result resultado = servicoTarefa.RemoverItem(id, titulo);
-
-            if (resultado.IsFailed)
-                TempData.AddErrorMessage(resultado);
-
-            return RedirectToAction(nameof(Detalhes), new { id });
-        }
-
-        [HttpPost]
-        public ActionResult AlterarConclusaoItem(Guid id, string titulo, bool estaConcluido)
-        {
-            Result resultado = servicoTarefa.AlterarConclusaoItem(id, titulo, estaConcluido);
-
-            if (resultado.IsFailed)
-                TempData.AddErrorMessage(resultado);
-
-            return RedirectToAction(nameof(Detalhes), new { id });
-        }
-
-        [HttpPost]
-        public ActionResult AlternarConclusaoItem(Guid id, [FromBody] AlternarConclusaoItemViewModel vm)
-        {
-            if (vm is null || string.IsNullOrWhiteSpace(vm.Titulo))
-                return BadRequest(new { mensagem = "Item da tarefa não encontrado." });
-
-            var resultado = servicoTarefa.AlternarConclusaoItem(id, vm.Titulo);
-
-            if (resultado.IsFailed)
-                return BadRequest(new { mensagem = resultado.Errors[0].Message });
-
-            var tarefa = resultado.Value;
-            var item = tarefa.Itens.First(i => i.Titulo.Equals(vm.Titulo, StringComparison.OrdinalIgnoreCase));
-
-            return Ok(new
+            if (!ModelState.IsValid)
             {
-                item.EstaConcluido,
-                PercentualConcluido = Math.Clamp(tarefa.PercentualConcluido * 100, 0, 100),
-                ItensConcluidos = tarefa.Itens.Count(i => i.EstaConcluido),
-                TotalItens = tarefa.Itens.Count,
-                DataConclusao = tarefa.DataConclusao?.ToShortDateString() ?? "Pendente"
-            });
+                TempData.AddErrorMessage(Result.Fail(ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .FirstOrDefault(e => !string.IsNullOrWhiteSpace(e))
+                    ?? "Item da tarefa não encontrado."));
+                return RedirectToAction(nameof(Detalhes), new { id = vm.TarefaId });
+            }
+
+            var resultado = servicoItemTarefa.Cadastrar(mapper.Map<ItemTarefaDto>(vm));
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id = vm.TarefaId });
         }
 
+        [HttpPost]
+        public ActionResult RemoverItem(ItemTarefaViewModel vm)
+        {
+            var resultado = servicoItemTarefa.Excluir(mapper.Map<ItemTarefaDto>(vm));
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id = vm.TarefaId });
+        }
+
+        [HttpPost]
+        public ActionResult EditarItens(EditarItensViewModel vm)
+        {
+            var resultado = servicoItemTarefa.EditarItens(mapper.Map<List<ItemTarefaDto>>(vm.Itens), vm.TarefaId);
+
+            if (resultado.IsFailed)
+                TempData.AddErrorMessage(resultado);
+
+            return RedirectToAction(nameof(Detalhes), new { id = vm.TarefaId });
+        }
     }
 }
