@@ -4,5 +4,6 @@ public record FormFieldViewModel(
     string Name,
     string Label,
     object? Value,
-    string Type
+    string Type,
+    IReadOnlyDictionary<string, object?>? Attributes = null
 );

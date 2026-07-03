@@ -1,6 +1,28 @@
 ﻿@model FormFieldViewModel
+@{
+    var valor = Model.Value switch
+    {
+        DateTime data when Model.Type == "date" => data.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        DateTime data when Model.Type == "datetime-local" => data.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture),
+        IFormattable numero when Model.Type == "number" => numero.ToString(null, CultureInfo.InvariantCulture),
+        _ => Model.Value?.ToString()
+    };
+
+    var htmlAttributes = new Dictionary<string, object?>
+    {
+        ["class"] = "form-control",
+        ["type"] = Model.Type,
+        ["id"] = Model.Name
+    };
+
+    if (Model.Attributes is not null)
+    {
+        foreach (var atributo in Model.Attributes)
+            htmlAttributes[atributo.Key] = atributo.Value;
+    }
+}
 <div class="form-group mb-3">
     <label for="@Model.Name" class="form-label fw-semibold text-primary text-uppercase small">@Model.Label</label>
-    <input type="@Model.Type" id="@Model.Name" name="@Model.Name" value="@Model.Value" class="form-control" />
+    @Html.TextBox(Model.Name, valor, htmlAttributes)
 </div>
 @Html.ValidationMessage(Model.Name, "", new { @class = "text-danger small fw-semibold field-validation-error" })

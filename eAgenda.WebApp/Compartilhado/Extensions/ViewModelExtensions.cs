@@ -7,12 +7,12 @@ namespace eAgenda.WebApp.Compartilhado.Extensions;
 
 public static class ViewModelExtensions
 {
-    public static FormFieldViewModel ConvertToFormField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string type, string? label = null)
+    public static FormFieldViewModel ConvertToFormField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, string type, string? label = null, IReadOnlyDictionary<string, object?>? attributes = null)
     {
         var name = GetMemberName(expression.Body) ?? throw new ArgumentException($"Could not determine the field name from expression '{expression}'.", nameof(expression));
         var value = expression.Compile()(model);
 
-        return new FormFieldViewModel(name, label ?? name, value, type);
+        return new FormFieldViewModel(name, label ?? name, value, type, attributes);
     }
 
     public static FormSelectViewModel ConvertToFormSelect<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, IEnumerable<SelectListItem> options, string? label = null, string? placeholder = null)
