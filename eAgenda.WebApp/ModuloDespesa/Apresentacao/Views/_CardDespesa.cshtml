@@ -1,10 +1,10 @@
 ﻿@model MostrarDespesaViewModel
 @{
     var campos = new[] {
-                Model.DisplayField(vm => vm.Descricao.Truncar(25),"Descrição"),
-                Model.DisplayField(vm => vm.Valor.ToString("C2")),
-                Model.DisplayField(vm => vm.FormaPagamento, "Forma de Pagamento")
-            };
+        Model.DisplayField(vm => vm.Descricao.Truncar(25),"Descrição"),
+        Model.DisplayField(vm => vm.Valor.ToString("C2")),
+        Model.DisplayField(vm => vm.FormaPagamento, "Forma de Pagamento")
+    };
 }
 <div class="col-12 col-md-6 col-xl-4">
     <div class="card h-100 shadow-sm border-1 rounded-4">
