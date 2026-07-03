@@ -1,5 +1,5 @@
-using System.Linq.Expressions;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using eAgenda.WebApp.Compartilhado.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -50,10 +50,10 @@ public static class ViewModelExtensions
             throw new ArgumentException($"Could not determine the field name from expression '{expression}'. Provide the label explicitly.", nameof(expression));
         var value = expression.Compile()(model);
 
-        return new((label ?? name)!, value);
+        return new((label ?? name)!, value is Enum enumValue? GetEnumDisplayName(enumValue) : value);
     }
 
-    public static DisplayFieldViewModel DisplayField<TModel, TValue>(this TModel model, Expression<Func<TModel, TValue>> expression, object? value, string? label = null)
+    public static DisplayFieldViewModel DisplayField<TModel, TValue>(this TModel _, Expression<Func<TModel, TValue>> expression, object? value, string? label = null)
     {
         var name = GetMemberName(expression.Body);
         if (name is null && label is null)
