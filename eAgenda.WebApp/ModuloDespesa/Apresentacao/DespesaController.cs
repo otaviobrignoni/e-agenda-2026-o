@@ -48,6 +48,40 @@ public class DespesaController(ServicoDespesa servicoDespesa, ServicoCategoria s
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public ActionResult Editar(Guid id)
+    {
+        var resultado = servicoDespesa.Selecionar(id);
+
+        if (resultado.IsFailed)
+        {
+            TempData.AddErrorMessage(resultado);
+            return RedirectToAction(nameof(Index));
+        }
+
+        var vm = mapper.Map<DespesaViewModel>(resultado.Value);
+
+        return View(vm with { CategoriasSelecionaveis = SelecionarCategorias() });
+    }
+
+    [HttpPost]
+    public ActionResult Editar(DespesaViewModel vm)
+    {
+        if (!ModelState.IsValid)
+            return View(vm with { CategoriasSelecionaveis = SelecionarCategorias() });
+
+        var dto = mapper.Map<DespesaDto>(vm);
+        var resultado = servicoDespesa.Editar(dto);
+
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            return View(vm with { CategoriasSelecionaveis = SelecionarCategorias() });
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
     private List<SelectListItem> SelecionarCategorias()
     {
         var dtos = servicoCategoria.Selecionar();

@@ -9,35 +9,70 @@ public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorio
 {
     public Result Cadastrar(DespesaDto dto)
     {
-        if (dto.Categorias.Count == 0)
-            return Falha(nameof(dto.Categorias), "Adicione pelo menos uma categoria.");
+        var resultadoCategorias = SelecionarCategorias(dto.Categorias);
 
-        var categorias = new List<Categoria>();
+        if (resultadoCategorias.IsFailed)
+            return Result.Fail(resultadoCategorias.Errors);
 
-        foreach (var categoriaId in dto.Categorias)
-        {
-            if (categoriaId == Guid.Empty)
-                return Falha(nameof(dto.Categorias), "Selecione uma categoria válida.");
-
-            var categoria = repositorioCategoria.Selecionar(categoriaId);
-
-            if (categoria is null)
-                return Falha(nameof(dto.Categorias), "Uma ou mais categorias não foram encontradas.");
-
-            if (categorias.Any(c => c.Id == categoria.Id))
-                return Falha(nameof(dto.Categorias), "Não adicione categorias repetidas.");
-
-            categorias.Add(categoria);
-        }
-
-        repositorioDespesa.Cadastrar(new Despesa(dto.Descricao, dto.Data, dto.Valor, dto.FormaPagamento, categorias));
+        repositorioDespesa.Cadastrar(new Despesa(dto.Descricao, dto.Data, dto.Valor, dto.FormaPagamento, resultadoCategorias.Value));
 
         return Result.Ok();
+    }
+
+    public Result Editar(DespesaDto dto)
+    {
+        var resultadoCategorias = SelecionarCategorias(dto.Categorias);
+
+        if (resultadoCategorias.IsFailed)
+            return Result.Fail(resultadoCategorias.Errors);
+
+        var despesaEditada = new Despesa(dto.Descricao, dto.Data, dto.Valor, dto.FormaPagamento, resultadoCategorias.Value);
+
+        if (!repositorioDespesa.Editar(dto.Id, despesaEditada))
+            return Result.Fail("Despesa não encontrada.");
+
+        return Result.Ok();
+    }
+
+    public Result<DespesaDto> Selecionar(Guid id)
+    {
+        var despesa = repositorioDespesa.Selecionar(id);
+
+        if (despesa is null)
+            return Result.Fail("Despesa não encontrada.");
+
+        return Result.Ok(mapper.Map<DespesaDto>(despesa));
     }
 
     public List<MostrarDespesaDto> Selecionar()
     {
         return mapper.Map<List<MostrarDespesaDto>>(repositorioDespesa.Registros);
+    }
+
+    private Result<List<Categoria>> SelecionarCategorias(List<Guid> categoriaIds)
+    {
+        if (categoriaIds.Count == 0)
+            return Falha(nameof(DespesaDto.Categorias), "Adicione pelo menos uma categoria.");
+
+        var categorias = new List<Categoria>();
+
+        foreach (var categoriaId in categoriaIds)
+        {
+            if (categoriaId == Guid.Empty)
+                return Falha(nameof(DespesaDto.Categorias), "Selecione uma categoria válida.");
+
+            var categoria = repositorioCategoria.Selecionar(categoriaId);
+
+            if (categoria is null)
+                return Falha(nameof(DespesaDto.Categorias), "Uma ou mais categorias não foram encontradas.");
+
+            if (categorias.Any(c => c.Id == categoria.Id))
+                return Falha(nameof(DespesaDto.Categorias), "Não adicione categorias repetidas.");
+
+            categorias.Add(categoria);
+        }
+
+        return Result.Ok(categorias);
     }
 
     private static Result Falha(string campo, string mensagem)
