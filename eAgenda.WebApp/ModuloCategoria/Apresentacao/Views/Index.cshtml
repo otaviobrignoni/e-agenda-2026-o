@@ -5,7 +5,7 @@
 
 @model List<CategoriaViewModel>;
 
-<partial name="_BotaoCadastrar" />
+<partial name="_BotaoCadastrar" model="false" />
 
 @if (TempData["MensagemErro"] is string mensagemErro)
 {
