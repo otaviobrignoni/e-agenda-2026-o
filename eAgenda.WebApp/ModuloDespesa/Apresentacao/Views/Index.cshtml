@@ -1,8 +1,8 @@
 ﻿@{
     ViewBag.Titulo = "Listagem de Despesas";
 }
-@model List<DespesaViewModel>
-<partial name="_BotaoCadastrar" />
+@model List<MostrarDespesaViewModel>
+<partial name="_BotaoCadastrar" model="@(ViewBag.TemCategorias is not true)" />
 @if (TempData["MensagemErro"] is string mensagemErro)
 {
     <partial name="_Alerta" model="@new AlertaViewModel(mensagemErro, true)" />

@@ -9,5 +9,14 @@ public record class DespesaDto(
     DateTime Data,
     decimal Valor,
     FormaPagamento FormaPagamento,
+    List<Guid> Categorias
+);
+
+public record class MostrarDespesaDto(
+    Guid Id,
+    string Descricao,
+    DateTime Data,
+    decimal Valor,
+    FormaPagamento FormaPagamento,
     List<CategoriaDto> Categorias
 );

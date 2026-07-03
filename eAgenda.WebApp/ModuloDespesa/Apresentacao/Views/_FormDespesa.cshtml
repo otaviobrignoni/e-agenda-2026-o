@@ -1,0 +1,48 @@
+@model DespesaViewModel
+<input type="hidden" asp-for="Id" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Descricao, "text", "Descrição")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Data, "date", "Data")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Valor, "number", "Valor", new Dictionary<string, object?> { ["min"] = 0.01m, ["step"] = 0.01m })" />
+<partial name="_FormSelect" model="@Model.ConvertToFormSelect(vm => vm.FormaPagamento, label: "Forma de Pagamento")" />
+
+<div class="d-flex align-items-center justify-content-between mb-2">
+    <h5 class="form-label fw-semibold text-primary text-uppercase small mb-0">Categorias</h5>
+    <button id="adicionar-categoria" class="btn btn-outline-primary btn-sm" type="button">Adicionar categoria</button>
+</div>
+
+<span asp-validation-for="Categorias" class="text-danger small fw-semibold"></span>
+<div id="categorias">
+    @for (var i = 0; i < Model.Categorias.Count; i++)
+    {
+        <div class="categoria-despesa row g-2 align-items-start mb-2">
+            <div class="@(i == 0 ? "col-12" : "col") campo-categoria">
+                <select asp-for="Categorias[i]" asp-items="@Model.CategoriasSelecionaveis" class="form-select categoria">
+                </select>
+                <span asp-validation-for="Categorias[i]" class="text-danger small fw-semibold validacao-categoria"></span>
+            </div>
+            @if (i != 0)
+            {
+                <div class="col-auto d-grid coluna-remover">
+                    <button class="btn btn-outline-danger remover-categoria" type="button">Remover</button>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<template id="modelo-categoria">
+    <div class="categoria-despesa row g-2 align-items-start mb-2">
+        <div class="col campo-categoria">
+            <select class="form-select categoria">
+                @foreach (var categoria in Model.CategoriasSelecionaveis)
+                {
+                    <option value="@categoria.Value">@categoria.Text</option>
+                }
+            </select>
+            <span class="text-danger small fw-semibold field-validation-valid validacao-categoria" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col-auto d-grid coluna-remover">
+            <button class="btn btn-outline-danger remover-categoria" type="button">Remover</button>
+        </div>
+    </div>
+</template>
