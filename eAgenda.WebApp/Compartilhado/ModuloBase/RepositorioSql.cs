@@ -39,11 +39,11 @@ public abstract class RepositorioSql<TRegistro, TRow>(ISqlConnectionFactory conn
         return conexao.Query<TRow>(sqlQuery).Select(Mapear).Where(filtro ?? (_ => true))!;
     }
 
-    protected IEnumerable<T> Query<T>(string sqlQuery, Guid id = default)
+    protected IEnumerable<T> Query<T>(string sqlQuery, Guid? id = null)
     {
         using SqlConnection conexao = connectionFactory.CreateConnection();
         conexao.Open();
-        return conexao.Query<T>(sqlQuery, new { Id = id }).ToList(); ;
+        return conexao.Query<T>(sqlQuery, id is not null ? new { Id = id } : null).ToList(); ;
     }
 
     protected IEnumerable<T> Query<T>(string sqlQuery, object parametros)

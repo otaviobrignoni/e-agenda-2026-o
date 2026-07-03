@@ -32,6 +32,11 @@
     <Folder Include="ModuloCategoria\Infra\" />
     <Folder Include="ModuloContato\Dominio\" />
     <Folder Include="ModuloContato\Infra\" />
+    <Folder Include="ModuloDespesa\" />
+    <Folder Include="ModuloDespesa\Aplicacao\" />
+    <Folder Include="ModuloDespesa\Apresentacao\" />
+    <Folder Include="ModuloDespesa\Dominio\" />
+    <Folder Include="ModuloDespesa\Infra\" />
     <Folder Include="ModuloHome\" />
     <Folder Include="ModuloHome\Views\" />
     <Folder Include="ModuloTarefa\Aplicacao\" />
