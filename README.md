@@ -2,8 +2,6 @@
 
 **Atividade 17 - [Academia do Programador](https://www.academiadoprogramador.net/inicio) 2026**
 
-Acesse em [eagenda.azurewebsites.net](https://eagenda.azurewebsites.net/)
-
 ## Funcionalidades
 
 - Cadastro, edição, exclusão e visualização de **contatos**
