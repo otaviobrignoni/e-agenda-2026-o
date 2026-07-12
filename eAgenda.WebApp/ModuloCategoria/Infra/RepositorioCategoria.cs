@@ -5,14 +5,8 @@ using eAgenda.WebApp.ModuloCategoria.Dominio;
 
 namespace eAgenda.WebApp.ModuloCategoria.Infra;
 
-public class RepositorioCategoria : RepositorioSql<Categoria, Categoria>, IRepositorioCategoria
+public class RepositorioCategoria(ISqlConnectionFactory connectionFactory, IMapper mapper, IRepositorioGenerico repositorioGenerico) : RepositorioSql<Categoria, Categoria>(connectionFactory, mapper), IRepositorioCategoria
 {
-    public RepositorioCategoria(ISqlConnectionFactory connectionFactory, IMapper mapper) : base(connectionFactory, mapper)
-    {
-    }
-
-    public List<Categoria> Registros => Selecionar();
-
     public bool Cadastrar(Categoria registro)
     {
         string sqlQuery = """
@@ -66,17 +60,31 @@ public class RepositorioCategoria : RepositorioSql<Categoria, Categoria>, IRepos
             ORDER BY Titulo;
         """;
 
-        return Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
+        return [.. Query(sqlQuery).Where(filtro ?? (t => true))];
+    }
+
+    public List<Categoria> Selecionar(IEnumerable<Guid> ids)
+    {
+        string sqlQuery = """
+            SELECT Id, Titulo
+            FROM dbo.TBCategoria
+            WHERE Id IN @Ids
+            ORDER BY Titulo;
+        """;
+
+        var idsLista = ids.ToList();
+
+        return [.. Query(sqlQuery, new { Ids = idsLista })];
     }
 
     public bool PossuiDespesas(Guid id)
     {
-        const string sqlQuery = """
+        string sqlQuery = """
             SELECT COUNT(1)
             FROM dbo.TBCategoriaDespesa
             WHERE CategoriaId = @Id;
         """;
 
-        return QuerySingle<int>(sqlQuery, id) > 0;
+        return repositorioGenerico.QuerySingle<int>(sqlQuery, id) > 0;
     }
 }

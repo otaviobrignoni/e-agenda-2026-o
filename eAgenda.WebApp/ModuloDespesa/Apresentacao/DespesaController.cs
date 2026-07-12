@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eAgenda.WebApp.ModuloDespesa.Apresentacao;
 
-public class DespesaController(ServicoDespesa servicoDespesa, ServicoCategoria servicoCategoria, IMapper mapper) : Controller
+public class DespesaController(IServicoDespesa servicoDespesa, IServicoCategoria servicoCategoria, IMapper mapper) : Controller
 {
     [HttpGet]
     public ActionResult Index()
     {
-        var dtos = servicoDespesa.Selecionar();
+        var dtos = servicoDespesa.Selecionar<MostrarDespesaDto>();
         ViewBag.TemCategorias = servicoCategoria.Selecionar().Count > 0;
         var vms = mapper.Map<List<MostrarDespesaViewModel>>(dtos);
         return View(vms);

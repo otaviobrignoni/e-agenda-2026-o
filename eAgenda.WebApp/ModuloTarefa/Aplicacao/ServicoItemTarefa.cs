@@ -3,9 +3,7 @@ using FluentResults;
 
 namespace eAgenda.WebApp.ModuloTarefa.Aplicacao;
 
-public class ServicoItemTarefa(
-    IRepositorioTarefa repositorioTarefa,
-    IRepositorioItemTarefa repositorioItemTarefa)
+public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositorioItemTarefa repositorioItemTarefa) :  IServicoItemTarefa
 {
     public Result Cadastrar(ItemTarefaDto dto)
     {
@@ -53,15 +51,15 @@ public class ServicoItemTarefa(
         return Result.Ok();
     }
 
-    public Result EditarItens(List<ItemTarefaDto> itens, Guid tarefaId)
+    public Result Editar(List<ItemTarefaDto> itens, Guid tarefaId)
     {
         var tarefa = repositorioTarefa.Selecionar(tarefaId);
 
         if (tarefa is null)
             return Result.Fail("Tarefa não encontrada.");
 
-        var idsSubmetidos = itens.Select(i => i.Id).Where(id => id != Guid.Empty).ToHashSet();
-        var itensExcluidos = tarefa.Itens.Where(i => !idsSubmetidos.Contains(i.Id)).ToList();
+        var idsSubmetidos = itens.Select(i => i.Id).Where(id => id != Guid.Empty);
+        var itensExcluidos = tarefa.Itens.Where(i => !idsSubmetidos.Contains(i.Id));
         var itensAdicionados = new List<ItemTarefa>();
         var itensEditados = new List<ItemTarefa>();
 
@@ -88,7 +86,7 @@ public class ServicoItemTarefa(
             itensEditados.Add(item);
         }
 
-        if (!repositorioItemTarefa.EditarItens(itensExcluidos, itensAdicionados, itensEditados))
+        if (!repositorioItemTarefa.Editar(itensExcluidos, itensAdicionados, itensEditados))
             return Result.Fail("Não foi possível atualizar os itens da tarefa.");
 
         if (!repositorioTarefa.AtualizarDataConclusao(tarefa))

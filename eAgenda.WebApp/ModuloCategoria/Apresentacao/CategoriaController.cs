@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.WebApp.ModuloCategoria.Apresentacao
 {
-    public class CategoriaController(ServicoCategoria servicoCategoria, IMapper mapper) : Controller
+    public class CategoriaController(IServicoCategoria servicoCategoria, IMapper mapper) : Controller
     {
         [HttpGet]
         public ActionResult Index()

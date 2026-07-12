@@ -1,4 +1,5 @@
 using AutoMapper;
+using eAgenda.WebApp.Compartilhado.Extensions;
 using eAgenda.WebApp.ModuloCategoria.Aplicacao;
 using eAgenda.WebApp.ModuloDespesa.Aplicacao;
 using eAgenda.WebApp.ModuloDespesa.Apresentacao;
@@ -13,6 +14,8 @@ public class DespesaProfile : Profile
     {
         CreateMap<Despesa, DespesaDto>()
             .ForCtorParam(nameof(DespesaDto.Categorias), config => config.MapFrom(src => src.Categorias.Select(c => c.Id).ToList()));
+        CreateMap<DespesaDto, Despesa>()
+            .ForMember(dest => dest.Categorias, config => config.MapFromContext(nameof(Despesa.Categorias)));
         CreateMap<Despesa, MostrarDespesaDto>();
         CreateMap<DespesaViewModel, DespesaDto>();
         CreateMap<DespesaDto, DespesaViewModel>()

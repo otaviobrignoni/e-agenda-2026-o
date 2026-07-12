@@ -1,6 +1,7 @@
 using eAgenda.WebApp.Compartilhado.Infra;
 using eAgenda.WebApp.Compartilhado.Logging;
 using eAgenda.WebApp.Compartilhado.Mapping;
+using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloTarefa.Aplicacao;
 using eAgenda.WebApp.ModuloTarefa.Dominio;
 using eAgenda.WebApp.ModuloTarefa.Infra;
@@ -50,6 +51,7 @@ public static class InjecaoDependencia
     public static void AddRepositoriesConfig(this IServiceCollection services)
     {
         services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
+        services.AddScoped<IRepositorioGenerico, RepositorioGenerico>();
 
         //services.AddScoped<IRepositorio(*), Repositorio(*)>();
         services.AddScoped<IRepositorioTarefa, RepositorioTarefa>();
@@ -65,10 +67,10 @@ public static class InjecaoDependencia
         services.AddSerilogLogger(config, logging);
 
         //services.AddScoped<Servico(*)>();
-        services.AddScoped<ServicoTarefa>();
-        services.AddScoped<ServicoItemTarefa>();
-        services.AddScoped<ServicoCategoria>();
-        services.AddScoped<ServicoContato>();
-        services.AddScoped<ServicoDespesa>();
+        services.AddScoped<IServicoTarefa, ServicoTarefa>();
+        services.AddScoped<IServicoItemTarefa, ServicoItemTarefa>();
+        services.AddScoped<IServicoCategoria, ServicoCategoria>();
+        services.AddScoped<IServicoContato, ServicoContato>();
+        services.AddScoped<IServicoDespesa, ServicoDespesa>();
     }
 }

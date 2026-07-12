@@ -17,7 +17,7 @@ public class TarefaProfile : Profile
         CreateMap<ItemTarefa, ItemTarefaDto>();
         CreateMap<ItemTarefaRow, ItemTarefa>()
             .ForCtorParam("titulo", opt => opt.MapFrom(src => src.Titulo))
-            .ForCtorParam("tarefa", opt => opt.MapFromContext("Tarefa"))
+            .ForCtorParam("tarefa", opt => opt.MapFromContext(nameof(ItemTarefa.Tarefa)))
             .ForCtorParam("estaConcluido", opt => opt.MapFrom(src => src.EstaConcluido));
 
         CreateMap<TarefaViewModel, TarefaDto>();

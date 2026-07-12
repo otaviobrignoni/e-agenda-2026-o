@@ -1,20 +1,22 @@
 using AutoMapper;
+using eAgenda.WebApp.Compartilhado.Extensions;
+using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloCategoria.Dominio;
 using eAgenda.WebApp.ModuloDespesa.Dominio;
 using FluentResults;
 
 namespace eAgenda.WebApp.ModuloDespesa.Aplicacao;
 
-public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorioCategoria repositorioCategoria, IMapper mapper)
+public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorioCategoria repositorioCategoria, IMapper mapper)    : ServicoBase<Despesa, DespesaDto>(repositorioDespesa, mapper, "Despesa não encontrada."), IServicoDespesa
 {
-    public Result Cadastrar(DespesaDto dto)
+    public override Result Cadastrar(DespesaDto dto)
     {
         var resultadoCategorias = SelecionarCategorias(dto.Categorias);
 
         if (resultadoCategorias.IsFailed)
             return Result.Fail(resultadoCategorias.Errors);
 
-        var despesa = new Despesa(dto.Descricao, dto.Data, dto.Valor, dto.FormaPagamento, resultadoCategorias.Value);
+        var despesa = Mapper.MapWith<Despesa>(dto, (nameof(Despesa.Categorias), resultadoCategorias.Value.OrderBy(c => c.Titulo).ToList()));
 
         if (!repositorioDespesa.Cadastrar(despesa))
             return Result.Fail("Não foi possível cadastrar a despesa.");
@@ -22,14 +24,14 @@ public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorio
         return Result.Ok();
     }
 
-    public Result Editar(DespesaDto dto)
+    public override Result Editar(DespesaDto dto)
     {
         var resultadoCategorias = SelecionarCategorias(dto.Categorias);
 
         if (resultadoCategorias.IsFailed)
             return Result.Fail(resultadoCategorias.Errors);
 
-        var despesaEditada = new Despesa(dto.Descricao, dto.Data, dto.Valor, dto.FormaPagamento, resultadoCategorias.Value);
+        var despesaEditada = Mapper.MapWith<Despesa>(dto, (nameof(Despesa.Categorias), resultadoCategorias.Value.OrderBy(c => c.Titulo).ToList()));
 
         if (!repositorioDespesa.Editar(dto.Id, despesaEditada))
             return Result.Fail("Despesa não encontrada.");
@@ -37,28 +39,9 @@ public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorio
         return Result.Ok();
     }
 
-    public Result Excluir(Guid id)
-    {
-        if (!repositorioDespesa.Excluir(id))
-            return Result.Fail("Despesa não encontrada.");
+    public Result<TDto> Selecionar<TDto>(Guid id) where TDto : DespesaDtoBase => SelecionarDto<TDto>(id);
 
-        return Result.Ok();
-    }
-
-    public Result<TDto> Selecionar<TDto>(Guid id) where TDto : DespesaDtoBase<TDto>
-    {
-        var despesa = repositorioDespesa.Selecionar(id);
-
-        if (despesa is null)
-            return Result.Fail("Despesa não encontrada.");
-
-        return Result.Ok(mapper.Map<TDto>(despesa));
-    }
-
-    public List<MostrarDespesaDto> Selecionar()
-    {
-        return mapper.Map<List<MostrarDespesaDto>>(repositorioDespesa.Registros);
-    }
+    public List<TDto> Selecionar<TDto>() where TDto : DespesaDtoBase => SelecionarDto<TDto>();
 
     private Result<List<Categoria>> SelecionarCategorias(List<Guid> categoriaIds)
     {
@@ -86,10 +69,4 @@ public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorio
         return Result.Ok(categorias);
     }
 
-    private static Result Falha(string campo, string mensagem)
-    {
-        IError erro = new Error(mensagem).WithMetadata("Campo", campo);
-
-        return Result.Fail(erro);
-    }
 }

@@ -1,11 +1,13 @@
+using AutoMapper;
+using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloContato.Dominio;
 using FluentResults;
 
 namespace eAgenda.WebApp.ModuloContato.Aplicacao;
 
-public class ServicoContato(IRepositorioContato repositorioContato)
+public class ServicoContato(IRepositorioContato repositorioContato, IMapper mapper) : ServicoBase<Contato, ContatoDto>(repositorioContato, mapper, "Contato não encontrado."), IServicoContato
 {
-    public Result Cadastrar(ContatoDto dto)
+    public override Result Cadastrar(ContatoDto dto)
     {
         string textoFalha = "Já existe um contato com esse ";
         var contatos = repositorioContato.Selecionar();
@@ -20,14 +22,14 @@ public class ServicoContato(IRepositorioContato repositorioContato)
         if (falhas.Count > 0)
             return Result.Fail(falhas);
 
-        var contato = new Contato(dto.Nome, dto.Email, dto.Telefone, dto.Cargo, dto.Empresa);
+        var contato = Mapper.Map<Contato>(dto);
         if (!repositorioContato.Cadastrar(contato))
             return Result.Fail("Não foi possível cadastrar o contato.");
 
         return Result.Ok();
     }
 
-    public Result Editar(ContatoDto dto)
+    public override Result Editar(ContatoDto dto)
     {
         string textoFalha = "Já existe um contato com esse ";
         var outrosContatos = repositorioContato.Selecionar(c => dto.Id != c.Id);
@@ -42,36 +44,9 @@ public class ServicoContato(IRepositorioContato repositorioContato)
         if (falhas.Count > 0)
             return Result.Fail(falhas);
 
-        var contatoEditado = new Contato(dto.Nome, dto.Email, dto.Telefone, dto.Cargo, dto.Empresa);
+        var contatoEditado = Mapper.Map<Contato>(dto);
         if (!repositorioContato.Editar(dto.Id, contatoEditado))
             return Result.Fail("Contato não encontrado.");
         return Result.Ok();
-    }
-    public Result Excluir(Guid id)
-    {
-        if (!repositorioContato.Excluir(id))
-            return Result.Fail("Contato não encontrado.");
-        return Result.Ok();
-    }
-
-    public Result<ContatoDto> Selecionar(Guid id)
-    {
-        var contato = repositorioContato.Selecionar(id);
-        if (contato is null)
-            return Result.Fail("Contato não encontrado.");
-        return Result.Ok(new ContatoDto(contato.Nome, contato.Email, contato.Telefone, contato.Cargo, contato.Empresa, contato.Id));
-    }
-
-    public List<ContatoDto> Selecionar()
-    {
-        return repositorioContato.Registros.Select(t =>
-        {
-            return new ContatoDto(t.Nome, t.Email, t.Telefone, t.Cargo, t.Empresa, t.Id);
-        }).ToList();
-    }
-
-    private static IError ErroDeCampo(string campo, string mensagem)
-    {
-        return new Error(mensagem).WithMetadata("Campo", campo);
     }
 }

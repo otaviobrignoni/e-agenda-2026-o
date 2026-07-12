@@ -11,8 +11,6 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
     {
     }
 
-    public List<Contato> Registros => Selecionar();
-
     public bool Cadastrar(Contato registro)
     {
         string sqlQuery = """
@@ -70,6 +68,6 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
             ORDER BY Nome;
         """;
 
-        return Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
+        return [.. Query(sqlQuery).Where(filtro ?? (t => true))];
     }
 }

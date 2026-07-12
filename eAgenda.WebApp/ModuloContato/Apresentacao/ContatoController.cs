@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.WebApp.ModuloContato.Apresentacao
 {
-    public class ContatoController(ServicoContato servicoContato, IMapper mapper) : Controller
+    public class ContatoController(IServicoContato servicoContato, IMapper mapper) : Controller
     {
         [HttpGet]
         public ActionResult Index()

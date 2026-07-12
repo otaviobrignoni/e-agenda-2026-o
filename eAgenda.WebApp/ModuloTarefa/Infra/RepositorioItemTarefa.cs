@@ -5,8 +5,7 @@ using eAgenda.WebApp.ModuloTarefa.Dominio;
 
 namespace eAgenda.WebApp.ModuloTarefa.Infra;
 
-public class RepositorioItemTarefa(ISqlConnectionFactory connectionFactory, IMapper mapper)
-    : RepositorioSql<ItemTarefa, ItemTarefaRow>(connectionFactory, mapper), IRepositorioItemTarefa
+public class RepositorioItemTarefa(ISqlConnectionFactory connectionFactory, IMapper mapper) : RepositorioSql<ItemTarefa, ItemTarefaRow>(connectionFactory, mapper), IRepositorioItemTarefa
 {
     public List<ItemTarefa> Selecionar(Tarefa tarefa)
     {
@@ -16,67 +15,51 @@ public class RepositorioItemTarefa(ISqlConnectionFactory connectionFactory, IMap
             WHERE TarefaId = @Id
             ORDER BY Titulo;
         """;
-
-        return Query(
-            sqlQuery,
-            new { Id = tarefa.Id },
-            ("Tarefa", tarefa)
-        ).ToList();
+        return [.. Query(sqlQuery, new {tarefa.Id }, (nameof(ItemTarefa.Tarefa), tarefa))];
     }
 
     public bool Cadastrar(ItemTarefa item)
     {
-        const string sqlQuery = """
+        string sqlQuery = """
             INSERT INTO dbo.TBItemTarefa (Id, Titulo, EstaConcluido, TarefaId)
             VALUES (@Id, @Titulo, @EstaConcluido, @TarefaId);
         """;
-
         return Execute(sqlQuery, item);
     }
 
     public bool Excluir(ItemTarefa item)
     {
-        const string sqlQuery = """
+        string sqlQuery = """
             DELETE FROM dbo.TBItemTarefa
             WHERE Id = @Id;
         """;
-
         return Execute(sqlQuery, item);
     }
 
-    public bool EditarItens(
-        IReadOnlyCollection<ItemTarefa> itensExcluidos,
-        IReadOnlyCollection<ItemTarefa> itensAdicionados,
-        IReadOnlyCollection<ItemTarefa> itensEditados)
+    public bool Editar(IEnumerable<ItemTarefa> itensExcluidos, IEnumerable<ItemTarefa> itensAdicionados, IEnumerable<ItemTarefa> itensEditados)
     {
-        const string sqlExcluir = """
-            DELETE FROM dbo.TBItemTarefa
-            WHERE Id = @Id;
-        """;
+        List<(string, object?)> comandos = [];
+        (string, IEnumerable<ItemTarefa>)[] sqlItens = [
+            ("""
+                DELETE FROM dbo.TBItemTarefa
+                WHERE Id = @Id;
+            """, itensExcluidos),
+            ("""
+                INSERT INTO dbo.TBItemTarefa (Id, Titulo, EstaConcluido, TarefaId)
+                VALUES (@Id, @Titulo, @EstaConcluido, @TarefaId);
+            """, itensAdicionados),
+            ("""
+                UPDATE dbo.TBItemTarefa
+                SET EstaConcluido = @EstaConcluido
+                WHERE Id = @Id;
+            """, itensEditados)
+        ];
 
-        const string sqlCadastrar = """
-            INSERT INTO dbo.TBItemTarefa (Id, Titulo, EstaConcluido, TarefaId)
-            VALUES (@Id, @Titulo, @EstaConcluido, @TarefaId);
-        """;
-
-        const string sqlEditar = """
-            UPDATE dbo.TBItemTarefa
-            SET EstaConcluido = @EstaConcluido
-            WHERE Id = @Id;
-        """;
-
-        var comandos = new List<(string SqlQuery, object? Parametros)>();
-
-        AdicionarComandos(sqlExcluir, itensExcluidos);
-        AdicionarComandos(sqlCadastrar, itensAdicionados);
-        AdicionarComandos(sqlEditar, itensEditados);
-
+        foreach (var (sqlQuery, itens) in sqlItens)
+            foreach (var it in itens)
+                comandos.Add((sqlQuery, it));
+                
         return Execute([.. comandos]);
-
-        void AdicionarComandos(string sqlQuery, IReadOnlyCollection<ItemTarefa> itens)
-        {
-            comandos.AddRange(itens.Select(item => (sqlQuery, (object?)item)));
-        }
     }
 }
 

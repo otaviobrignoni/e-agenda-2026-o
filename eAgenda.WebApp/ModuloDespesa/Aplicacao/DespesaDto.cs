@@ -3,7 +3,7 @@ using eAgenda.WebApp.ModuloDespesa.Dominio;
 
 namespace eAgenda.WebApp.ModuloDespesa.Aplicacao;
 
-public record DespesaDtoBase<T>(
+public abstract record DespesaDtoBase(
     Guid Id,
     string Descricao,
     DateTime Data,
@@ -18,7 +18,7 @@ public record DespesaDto(
     decimal Valor,
     FormaPagamento FormaPagamento,
     List<Guid> Categorias
-) : DespesaDtoBase<DespesaDto>(Id, Descricao, Data, Valor, FormaPagamento);
+) : DespesaDtoBase(Id, Descricao, Data, Valor, FormaPagamento);
 
 public record MostrarDespesaDto(
     Guid Id,
@@ -27,4 +27,4 @@ public record MostrarDespesaDto(
     decimal Valor,
     FormaPagamento FormaPagamento,
     List<CategoriaDto> Categorias
-) : DespesaDtoBase<MostrarDespesaDto>(Id, Descricao, Data, Valor, FormaPagamento);
+) : DespesaDtoBase(Id, Descricao, Data, Valor, FormaPagamento);

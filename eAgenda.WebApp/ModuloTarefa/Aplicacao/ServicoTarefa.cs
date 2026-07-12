@@ -1,53 +1,31 @@
 using AutoMapper;
+using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloTarefa.Dominio;
 using FluentResults;
 
 namespace eAgenda.WebApp.ModuloTarefa.Aplicacao;
 
 public class ServicoTarefa(IRepositorioTarefa repositorioTarefa, IMapper mapper)
+    : ServicoBase<Tarefa, TarefaDto>(repositorioTarefa, mapper, "Tarefa não encontrada."), IServicoTarefa
 {
-    public Result Cadastrar(TarefaDto dto)
+    public override Result Cadastrar(TarefaDto dto)
     {
-        var tarefa = mapper.Map<Tarefa>(dto);
+        var tarefa = Mapper.Map<Tarefa>(dto);
         if (!repositorioTarefa.Cadastrar(tarefa))
             return Result.Fail("Não foi possível cadastrar a tarefa.");
 
         return Result.Ok();
     }
 
-    public Result Editar(TarefaDto dto)
+    public override Result Editar(TarefaDto dto)
     {
-        var tarefaEditada = mapper.Map<Tarefa>(dto);
+        var tarefaEditada = Mapper.Map<Tarefa>(dto);
         if (!repositorioTarefa.Editar(dto.Id, tarefaEditada))
             return Result.Fail("Tarefa não encontrada.");
         return Result.Ok();
     }
 
-    public Result Excluir(Guid id)
-    {
-        if (!repositorioTarefa.Excluir(id))
-            return Result.Fail("Tarefa não encontrada.");
-        return Result.Ok();
-    }
+    public Result<TDto> Selecionar<TDto>(Guid id) where TDto : TarefaDtoBase => SelecionarDto<TDto>(id);
 
-    public Result<TarefaDto> Selecionar(Guid id)
-    {
-        var tarefa = repositorioTarefa.Selecionar(id);
-        if (tarefa is null)
-            return Result.Fail("Tarefa não encontrada.");
-        return Result.Ok(mapper.Map<TarefaDto>(tarefa));
-    }
-
-    public Result<MostrarTarefaDto> SelecionarMostrar(Guid id)
-    {
-        var tarefa = repositorioTarefa.Selecionar(id);
-        if (tarefa is null)
-            return Result.Fail("Tarefa não encontrada.");
-        return Result.Ok(mapper.Map<MostrarTarefaDto>(tarefa));
-    }
-
-    public List<MostrarTarefaDto> Selecionar()
-    {
-        return mapper.Map<List<MostrarTarefaDto>>(repositorioTarefa.Registros);
-    }
+    public List<TDto> Selecionar<TDto>() where TDto : TarefaDtoBase => SelecionarDto<TDto>();
 }

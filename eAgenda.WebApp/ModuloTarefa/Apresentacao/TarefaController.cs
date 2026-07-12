@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
 {
-    public class TarefaController(ServicoTarefa servicoTarefa, ServicoItemTarefa servicoItemTarefa, IMapper mapper) : Controller
+    public class TarefaController(IServicoTarefa servicoTarefa, IServicoItemTarefa servicoItemTarefa, IMapper mapper) : Controller
     {
         [HttpGet]
         public ActionResult Index()
         {
-            var dtos = servicoTarefa.Selecionar();
+            var dtos = servicoTarefa.Selecionar<MostrarTarefaDto>();
 
             var vms = mapper.Map<List<MostrarTarefaViewModel>>(dtos);
 
@@ -46,7 +46,7 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
         [HttpGet]
         public ActionResult Editar(Guid id)
         {
-            var resultado = servicoTarefa.Selecionar(id);
+            var resultado = servicoTarefa.Selecionar<TarefaDto>(id);
 
             if (resultado.IsFailed)
             {
@@ -81,7 +81,7 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
         [HttpGet]
         public ActionResult Excluir(Guid id)
         {
-            var resultado = servicoTarefa.SelecionarMostrar(id);
+            var resultado = servicoTarefa.Selecionar<MostrarTarefaDto>(id);
 
             if (resultado.IsFailed)
             {
@@ -111,7 +111,7 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
         [HttpGet]
         public ActionResult Detalhes(Guid id)
         {
-            var resultado = servicoTarefa.SelecionarMostrar(id);
+            var resultado = servicoTarefa.Selecionar<MostrarTarefaDto>(id);
 
             if (resultado.IsFailed)
             {
@@ -169,7 +169,7 @@ namespace eAgenda.WebApp.ModuloTarefa.Apresentacao
                 return RedirectToAction(nameof(Detalhes), new { id = vm.TarefaId });
             }
 
-            var resultado = servicoItemTarefa.EditarItens(mapper.Map<List<ItemTarefaDto>>(vm.Itens), vm.TarefaId);
+            var resultado = servicoItemTarefa.Editar(mapper.Map<List<ItemTarefaDto>>(vm.Itens), vm.TarefaId);
 
             if (resultado.IsFailed)
                 TempData.AddErrorMessage(resultado);

@@ -20,6 +20,12 @@ public class Contato : EntidadeBase<Contato>
         Cargo = cargo;
         Empresa = empresa;
     }
+
+    public Contato(Guid id, string nome, string email, string telefone, string? cargo = null, string? empresa = null) : this(nome, email, telefone, cargo, empresa)
+    {
+        Id = id;
+    }
+    
     public override void Atualizar(Contato entidadeAtualizada)
     {
         Nome = entidadeAtualizada.Nome;
