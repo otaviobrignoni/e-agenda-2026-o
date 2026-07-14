@@ -1,0 +1,33 @@
+@{
+    ViewBag.Titulo = "Listagem de Compromissos";
+}
+
+@model List<CompromissoViewModel>
+
+<partial name="_BotaoCadastrar" model="false" />
+
+@if (TempData["MensagemErro"] is string mensagemErro)
+{
+    <partial name="_Alerta" model="@new AlertaViewModel(mensagemErro, true)" />
+}
+@if (Model.Count == 0)
+{
+    <partial name="_Alerta" model="@(new AlertaViewModel("Nenhum compromisso cadastrado."))" />
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2">
+        @foreach (var p in Model)
+        {
+            var campos = new[] {
+                p.DisplayField(vm => vm.Data, p.Data.ToString("dd/MM/yyyy"), "Data"),
+                p.DisplayField(vm => vm.HoraInicio, p.HoraInicio.ToString("HH:mm"), "Hora de início"),
+                p.DisplayField(vm => vm.HoraTermino, p.HoraTermino.ToString("HH:mm"), "Hora de término"),
+                p.DisplayField(vm => vm.Tipo, "Tipo"),
+                p.DisplayField(vm => vm.LocalOuLink.Truncar(35), p.Tipo == 0 ? "Link " : " Local"),
+                p.DisplayField(vm => vm.Contato, p.Contato?.Nome ?? "Não informado", "Contato")
+            };
+            <partial name="_Card" model="(p.DisplayField(vm => vm.Id.ToShortString(), p.Assunto), campos, p.Id, true, true)" />
+        }
+    </div>
+}

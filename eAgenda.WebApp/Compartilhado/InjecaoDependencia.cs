@@ -16,6 +16,7 @@ using eAgenda.WebApp.ModuloDespesa.Dominio;
 using eAgenda.WebApp.ModuloDespesa.Infra;
 using eAgenda.WebApp.ModuloCompromisso.Dominio;
 using eAgenda.WebApp.ModuloCompromisso.Infra;
+using eAgenda.WebApp.ModuloCompromisso.Aplicacao;
 
 namespace eAgenda.WebApp.Compartilhado;
 
@@ -75,5 +76,6 @@ public static class InjecaoDependencia
         services.AddScoped<IServicoCategoria, ServicoCategoria>();
         services.AddScoped<IServicoContato, ServicoContato>();
         services.AddScoped<IServicoDespesa, ServicoDespesa>();
+        services.AddScoped<IServicoCompromisso, ServicoCompromisso>();
     }
 }

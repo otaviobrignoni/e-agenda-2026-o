@@ -30,6 +30,8 @@
     <Folder Include="ModuloCategoria\Apresentacao\Views\" />
     <Folder Include="ModuloCategoria\Dominio\" />
     <Folder Include="ModuloCategoria\Infra\" />
+    <Folder Include="ModuloCompromisso\Aplicacao\" />
+    <Folder Include="ModuloCompromisso\Apresentacao\Views\" />
     <Folder Include="ModuloCompromisso\Infra\" />
     <Folder Include="ModuloContato\Dominio\" />
     <Folder Include="ModuloContato\Infra\" />
