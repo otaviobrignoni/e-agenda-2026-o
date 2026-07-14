@@ -8,6 +8,8 @@ namespace eAgenda.WebApp.Compartilhado.ModuloBase;
 
 public abstract class RepositorioSql<TRegistro, TRow>(ISqlConnectionFactory connectionFactory, IMapper mapper) where TRegistro : EntidadeBase<TRegistro> where TRow : class
 {
+    protected IMapper Mapper { get; } = mapper;
+
     protected bool Execute(string sqlQuery, Guid id) => Execute(sqlQuery, new { Id = id });
 
     protected bool Execute(string sqlQuery, object parametros) => Execute((sqlQuery, parametros));
@@ -49,7 +51,7 @@ public abstract class RepositorioSql<TRegistro, TRow>(ISqlConnectionFactory conn
         if (itens.Length == 0)
             return [.. rows.Select(Mapear)];
 
-        return [.. rows.Select(row => mapper.MapWith<TRegistro>(row, itens))];
+        return [.. rows.Select(row => Mapper.MapWith<TRegistro>(row, itens))];
     }
 
     protected TRegistro? QuerySingle(string sqlQuery, Guid id) => QuerySingle(sqlQuery, new { Id = id });
@@ -65,7 +67,7 @@ public abstract class RepositorioSql<TRegistro, TRow>(ISqlConnectionFactory conn
     {
         if (row is TRegistro registro)
             return registro;
-        return mapper.Map<TRegistro>(row);
+        return Mapper.Map<TRegistro>(row);
     }
 
     private SqlConnection AbrirConexao()

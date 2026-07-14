@@ -15,7 +15,7 @@ public class CompromissoProfile : Profile
         CreateMap<Compromisso, CompromissoDto>();
         CreateMap<CompromissoDto, Compromisso>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Contato, opt => opt.MapFromContext(nameof(Compromisso.Contato)));
+            .ForCtorParam("contato", opt => opt.MapFromContext(nameof(Compromisso.Contato)));
         CreateMap<Compromisso, MostrarCompromissoDto>()
             .ForCtorParam(nameof(MostrarCompromissoDto.ContatoNome), opt => opt.MapFrom(src => src.Contato == null ? null : src.Contato.Nome));
         CreateMap<CompromissoViewModel, CompromissoDto>();

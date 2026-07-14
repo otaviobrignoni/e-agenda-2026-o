@@ -56,6 +56,70 @@ public class CompromissoController(IServicoCompromisso servicoCompromisso, IServ
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public ActionResult Editar(Guid id)
+    {
+        var resultado = servicoCompromisso.Selecionar<CompromissoDto>(id);
+
+        if (resultado.IsFailed)
+        {
+            TempData.AddErrorMessage(resultado);
+            return RedirectToAction(nameof(Index));
+        }
+
+        var vm = mapper.Map<CompromissoViewModel>(resultado.Value);
+
+        return View(vm with { ContatosSelecionaveis = SelecionarContatos() });
+    }
+
+    [HttpPost]
+    public ActionResult Editar(CompromissoViewModel vm)
+    {
+        if (!ModelState.IsValid)
+            return View(vm with { ContatosSelecionaveis = SelecionarContatos() });
+
+        var dto = mapper.Map<CompromissoDto>(vm);
+        var resultado = servicoCompromisso.Editar(dto);
+
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            return View(vm with { ContatosSelecionaveis = SelecionarContatos() });
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public ActionResult Excluir(Guid id)
+    {
+        var resultado = servicoCompromisso.Selecionar<MostrarCompromissoDto>(id);
+
+        if (resultado.IsFailed)
+        {
+            TempData.AddErrorMessage(resultado);
+            return RedirectToAction(nameof(Index));
+        }
+
+        var vm = mapper.Map<MostrarCompromissoViewModel>(resultado.Value);
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    public ActionResult Excluir(MostrarCompromissoViewModel vm)
+    {
+        var resultado = servicoCompromisso.Excluir(vm.Id);
+
+        if (resultado.IsFailed)
+        {
+            ModelState.AddModelError(resultado);
+            return View(vm);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
     private List<SelectListItem> SelecionarContatos()
     {
         var dtos = servicoContato.Selecionar();

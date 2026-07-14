@@ -1,0 +1,21 @@
+@{
+    ViewBag.Titulo = "Exclusão de Compromisso";
+    var campos = new[] {
+        Model.DisplayField(vm => vm.Id, "Id"),
+        Model.DisplayField(vm => vm.Assunto, "Assunto"),
+        Model.DisplayField(vm => vm.Data, Model.Data.ToString("dd/MM/yyyy"), "Data"),
+        Model.DisplayField(vm => vm.HoraInicio, Model.HoraInicio.ToString("HH:mm"), "Hora de início"),
+        Model.DisplayField(vm => vm.HoraTermino, Model.HoraTermino.ToString("HH:mm"), "Hora de término"),
+        Model.DisplayField(vm => vm.Tipo, "Tipo"),
+        Model.DisplayField(vm => vm.LocalOuLink, Model.Tipo == TipoCompromisso.Remoto ? "Link" : "Local"),
+        Model.DisplayField(vm => vm.ContatoNome, Model.ContatoNome ?? "Não informado", "Contato")
+    };
+}
+
+@model MostrarCompromissoViewModel
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 620px;" asp-action="Excluir" asp-route-id="@Model.Id" method="post">
+    <partial name="_Alerta" model="@(new AlertaViewModel("Tem certeza que deseja excluir este compromisso?"))" />
+    <partial name="_CardCampos" model="@campos" />
+    <partial name="_FormAcoes" />
+</form>

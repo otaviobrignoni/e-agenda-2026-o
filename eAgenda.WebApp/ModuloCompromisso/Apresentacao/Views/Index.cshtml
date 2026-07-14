@@ -28,7 +28,7 @@ else
                 p.DisplayField(vm => vm.LocalOuLink.Truncar(35), p.Tipo == TipoCompromisso.Remoto ? "Link" : "Local"),
                 p.DisplayField(vm => vm.ContatoNome, p.ContatoNome ?? "Não informado", "Contato")
             };
-            <partial name="_Card" model="(p.DisplayField(vm => vm.Id.ToShortString(), p.Assunto), campos, p.Id, true, true)" />
+            <partial name="_Card" model="(p.DisplayField(vm => vm.Id.ToShortString(), p.Assunto), campos, p.Id, false, true)" />
         }
     </div>
 }

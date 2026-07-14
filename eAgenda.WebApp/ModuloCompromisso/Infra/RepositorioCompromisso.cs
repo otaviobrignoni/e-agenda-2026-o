@@ -15,25 +15,13 @@ public class RepositorioCompromisso(ISqlConnectionFactory connectionFactory, IMa
             VALUES (@Id, @Assunto, @Data, @HoraInicio, @HoraTermino, @Tipo, @LocalOuLink, @ContatoId)
         """;
 
-        var parametros = new
-        {
-            compromisso.Id,
-            compromisso.Assunto,
-            Data = compromisso.Data.ToDateTime(TimeOnly.MinValue),
-            HoraInicio = compromisso.HoraInicio.ToTimeSpan(),
-            HoraTermino = compromisso.HoraTermino.ToTimeSpan(),
-            compromisso.Tipo,
-            compromisso.LocalOuLink,
-            compromisso.ContatoId
-        };
+        var row = Mapper.Map<CompromissoRow>(compromisso);
 
-        return Execute(sqlQuery, parametros);
+        return Execute(sqlQuery, row);
     }
 
     public bool Editar(Guid id, Compromisso compromissoEditado)
     {
-        compromissoEditado.Id = id;
-        
         string sqlQuery = """
             UPDATE dbo.TBCompromisso
             SET
@@ -47,7 +35,10 @@ public class RepositorioCompromisso(ISqlConnectionFactory connectionFactory, IMa
             WHERE Id = @Id;
         """;
 
-        return Execute(sqlQuery, compromissoEditado);
+        var row = Mapper.Map<CompromissoRow>(compromissoEditado);
+        row.Id = id;
+
+        return Execute(sqlQuery, row);
     }
 
     public bool Excluir(Guid id)
@@ -141,6 +132,10 @@ public class CompromissoSqlProfile : Profile
 {
     public CompromissoSqlProfile()
     {
+        CreateMap<Compromisso, CompromissoRow>()
+            .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data.ToDateTime(TimeOnly.MinValue)))
+            .ForMember(dest => dest.HoraInicio, opt => opt.MapFrom(src => src.HoraInicio.ToTimeSpan()))
+            .ForMember(dest => dest.HoraTermino, opt => opt.MapFrom(src => src.HoraTermino.ToTimeSpan()));
         CreateMap<CompromissoRow, Compromisso>()
             .ForCtorParam("data", opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Data)))
             .ForCtorParam("horaInicio", opt => opt.MapFrom(src => TimeOnly.FromTimeSpan(src.HoraInicio)))

@@ -39,7 +39,30 @@ public class ServicoCompromisso(IRepositorioCompromisso repositorioCompromisso, 
 
     public override Result Editar(CompromissoDto dto)
     {
-        throw new NotImplementedException();
+        if (dto.HoraTermino <= dto.HoraInicio)
+            return Falha(nameof(dto.HoraTermino), "A hora de término deve ser posterior à hora de início.");
+
+        var temConflito = repositorioCompromisso.Selecionar(c => c.Id != dto.Id && c.Data == dto.Data && dto.HoraInicio < c.HoraTermino && dto.HoraTermino > c.HoraInicio).Count != 0;
+
+        if (temConflito)
+            return Falha(nameof(dto.HoraInicio), "Já existe um compromisso cadastrado nesse período.");
+
+        Contato? contato = null;
+
+        if (dto.ContatoId.HasValue)
+        {
+            contato = repositorioContato.Selecionar(dto.ContatoId.Value);
+
+            if (contato is null)
+                return Falha(nameof(dto.ContatoId), "O contato selecionado não foi encontrado.");
+        }
+
+        var compromissoEditado = Mapper.MapWith<Compromisso>(dto, (nameof(Compromisso.Contato), contato!));
+
+        if (!repositorioCompromisso.Editar(dto.Id, compromissoEditado))
+            return Result.Fail("Compromisso não encontrado.");
+
+        return Result.Ok();
     }
 
     public Result<TDto> Selecionar<TDto>(Guid id) where TDto : CompromissoDtoBase => SelecionarDto<TDto>(id);
