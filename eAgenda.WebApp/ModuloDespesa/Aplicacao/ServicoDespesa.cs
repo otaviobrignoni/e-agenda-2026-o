@@ -7,7 +7,7 @@ using FluentResults;
 
 namespace eAgenda.WebApp.ModuloDespesa.Aplicacao;
 
-public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorioCategoria repositorioCategoria, IMapper mapper)    : ServicoBase<Despesa, DespesaDto>(repositorioDespesa, mapper, "Despesa não encontrada."), IServicoDespesa
+public class ServicoDespesa(IRepositorioDespesa repositorioDespesa, IRepositorioCategoria repositorioCategoria, IMapper mapper) : ServicoBase<Despesa, DespesaDto>(repositorioDespesa, mapper, "Despesa não encontrada."), IServicoDespesa
 {
     public override Result Cadastrar(DespesaDto dto)
     {
