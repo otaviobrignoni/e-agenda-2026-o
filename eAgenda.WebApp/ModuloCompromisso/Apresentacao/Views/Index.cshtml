@@ -1,8 +1,9 @@
+@using eAgenda.WebApp.ModuloCompromisso.Dominio
 @{
     ViewBag.Titulo = "Listagem de Compromissos";
 }
 
-@model List<CompromissoViewModel>
+@model List<MostrarCompromissoViewModel>
 
 <partial name="_BotaoCadastrar" model="false" />
 
@@ -24,8 +25,8 @@ else
                 p.DisplayField(vm => vm.HoraInicio, p.HoraInicio.ToString("HH:mm"), "Hora de início"),
                 p.DisplayField(vm => vm.HoraTermino, p.HoraTermino.ToString("HH:mm"), "Hora de término"),
                 p.DisplayField(vm => vm.Tipo, "Tipo"),
-                p.DisplayField(vm => vm.LocalOuLink.Truncar(35), p.Tipo == 0 ? "Link " : " Local"),
-                p.DisplayField(vm => vm.Contato, p.Contato?.Nome ?? "Não informado", "Contato")
+                p.DisplayField(vm => vm.LocalOuLink.Truncar(35), p.Tipo == TipoCompromisso.Remoto ? "Link" : "Local"),
+                p.DisplayField(vm => vm.ContatoNome, p.ContatoNome ?? "Não informado", "Contato")
             };
             <partial name="_Card" model="(p.DisplayField(vm => vm.Id.ToShortString(), p.Assunto), campos, p.Id, true, true)" />
         }

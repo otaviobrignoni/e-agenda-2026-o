@@ -15,7 +15,19 @@ public class RepositorioCompromisso(ISqlConnectionFactory connectionFactory, IMa
             VALUES (@Id, @Assunto, @Data, @HoraInicio, @HoraTermino, @Tipo, @LocalOuLink, @ContatoId)
         """;
 
-        return Execute(sqlQuery, compromisso);
+        var parametros = new
+        {
+            compromisso.Id,
+            compromisso.Assunto,
+            Data = compromisso.Data.ToDateTime(TimeOnly.MinValue),
+            HoraInicio = compromisso.HoraInicio.ToTimeSpan(),
+            HoraTermino = compromisso.HoraTermino.ToTimeSpan(),
+            compromisso.Tipo,
+            compromisso.LocalOuLink,
+            compromisso.ContatoId
+        };
+
+        return Execute(sqlQuery, parametros);
     }
 
     public bool Editar(Guid id, Compromisso compromissoEditado)

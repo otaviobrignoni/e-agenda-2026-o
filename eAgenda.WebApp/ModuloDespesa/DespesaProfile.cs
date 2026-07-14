@@ -13,17 +13,18 @@ public class DespesaProfile : Profile
     public DespesaProfile()
     {
         CreateMap<Despesa, DespesaDto>()
-            .ForCtorParam(nameof(DespesaDto.Categorias), config => config.MapFrom(src => src.Categorias.Select(c => c.Id).ToList()));
+            .ForCtorParam(nameof(DespesaDto.Categorias), opt => opt.MapFrom(src => src.Categorias.Select(c => c.Id).ToList()));
         CreateMap<DespesaDto, Despesa>()
-            .ForMember(dest => dest.Categorias, config => config.MapFromContext(nameof(Despesa.Categorias)));
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Categorias, opt => opt.MapFromContext(nameof(Despesa.Categorias)));
         CreateMap<Despesa, MostrarDespesaDto>();
         CreateMap<DespesaViewModel, DespesaDto>();
         CreateMap<DespesaDto, DespesaViewModel>()
-            .ForCtorParam(nameof(DespesaViewModel.CategoriasSelecionaveis), config => config.MapFrom(_ => new List<SelectListItem>()));
+            .ForCtorParam(nameof(DespesaViewModel.CategoriasSelecionaveis), opt => opt.MapFrom(_ => new List<SelectListItem>()));
         CreateMap<MostrarDespesaDto, MostrarDespesaViewModel>();
 
         CreateMap<CategoriaDto, SelectListItem>()
-            .ForMember(dest => dest.Text, config => config.MapFrom(src => src.Titulo))
-            .ForMember(dest => dest.Value, config => config.MapFrom(src => src.Id.ToString()));
+            .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Titulo))
+            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Id.ToString()));
     }
 }

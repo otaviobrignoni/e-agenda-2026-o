@@ -10,6 +10,7 @@ public class CategoriaProfile : Profile
         CreateMap<CategoriaViewModel, CategoriaDto>();
         CreateMap<CategoriaDto, CategoriaViewModel>();
         CreateMap<Categoria, CategoriaDto>();
-        CreateMap<CategoriaDto, Categoria>();
+        CreateMap<CategoriaDto, Categoria>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 }

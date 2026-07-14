@@ -1,0 +1,10 @@
+@{
+    ViewBag.Titulo = "Cadastro de Compromisso";
+}
+
+@model CompromissoViewModel
+
+<form class="card border-primary-subtle shadow-sm mx-auto p-4" style="max-width: 760px;" asp-action="Cadastrar" method="post">
+    <partial name="_FormCompromisso" model="Model" />
+    <partial name="_FormAcoes" />
+</form>

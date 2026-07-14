@@ -12,6 +12,7 @@ public class ContatoProfile : Profile
         CreateMap<ContatoViewModel, ContatoDto>();
         CreateMap<ContatoDto, ContatoViewModel>();
         CreateMap<Contato, ContatoDto>();
-        CreateMap<ContatoDto, Contato>();
+        CreateMap<ContatoDto, Contato>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 }

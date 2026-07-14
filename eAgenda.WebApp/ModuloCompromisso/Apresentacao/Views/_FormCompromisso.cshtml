@@ -1,0 +1,9 @@
+@model CompromissoViewModel
+<input type="hidden" asp-for="Id" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Assunto, "text", "Assunto")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.Data, "date", "Data")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.HoraInicio, "time", "Hora de início", new Dictionary<string, object?> { ["step"] = 60 })" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.HoraTermino, "time", "Hora de término", new Dictionary<string, object?> { ["step"] = 60 })" />
+<partial name="_FormSelect" model="@Model.ConvertToFormSelect(vm => vm.Tipo, label: "Tipo")" />
+<partial name="_FormCampo" model="@Model.ConvertToFormField(vm => vm.LocalOuLink, "text", "Local ou link")"/>
+<partial name="_FormSelect" model="@Model.ConvertToFormSelect(vm => vm.ContatoId, Model.ContatosSelecionaveis, "Contato", "Nenhum contato")" />

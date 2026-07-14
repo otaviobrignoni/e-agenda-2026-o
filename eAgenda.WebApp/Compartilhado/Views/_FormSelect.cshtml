@@ -30,4 +30,4 @@
         }
     </select>
 </div>
-<span class="text-danger field-validation-valid" data-valmsg-for="@Model.Name" data-valmsg-replace="true"></span>
+@Html.ValidationMessage(Model.Name, "", new { @class = "text-danger small fw-semibold field-validation-error" })
