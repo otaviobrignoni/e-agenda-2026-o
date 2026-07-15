@@ -4,7 +4,7 @@ using eAgenda.WebApp.ModuloTarefa.Dominio;
 
 namespace eAgenda.WebApp.ModuloTarefa.Infra;
 
-public class RepositorioItemTarefaOrm(EAgendaDbContext dbContext) : RepositorioOrm<ItemTarefa>(dbContext), IRepositorioItemTarefa
+public class RepositorioItemTarefaOrm(EAgendaDbContext dbContext, ILogger<RepositorioOrm<ItemTarefa>> logger) : RepositorioOrm<ItemTarefa>(dbContext, logger), IRepositorioItemTarefa
 {
     public List<ItemTarefa> Selecionar(Tarefa tarefa)
     {
@@ -22,8 +22,9 @@ public class RepositorioItemTarefaOrm(EAgendaDbContext dbContext) : RepositorioO
             DbContext.SaveChanges();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Erro ao excluir item da tarefa.");
             return false;
         }
     }
@@ -41,8 +42,9 @@ public class RepositorioItemTarefaOrm(EAgendaDbContext dbContext) : RepositorioO
             DbContext.SaveChanges();
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Erro ao editar itens da tarefa.");
             return false;
         }
     }

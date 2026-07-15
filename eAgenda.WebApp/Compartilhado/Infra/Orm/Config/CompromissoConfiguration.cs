@@ -8,7 +8,9 @@ public sealed class CompromissoConfiguration : IEntityTypeConfiguration<Compromi
 {
     public void Configure(EntityTypeBuilder<Compromisso> builder)
     {
-        builder.ToTable("TBCompromisso");
+        builder.ToTable("TBCompromisso", table => 
+            table.HasCheckConstraint("CK_TBCompromisso_HorarioValido", "[HoraTermino] > [HoraInicio]")
+        );
 
         builder.HasKey(c => c.Id)
             .HasName("PK_TBCompromisso");

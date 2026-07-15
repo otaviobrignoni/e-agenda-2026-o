@@ -1,13 +1,14 @@
+using System.Linq.Expressions;
 using eAgenda.WebApp.Compartilhado.Infra.Orm;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.WebApp.Compartilhado.ModuloBase;
 
-public class RepositorioOrm<T>(EAgendaDbContext dbContext) : IRepositorio<T> where T : EntidadeBase<T>
+public class RepositorioOrm<T>(EAgendaDbContext dbContext, ILogger<RepositorioOrm<T>> logger) : IRepositorio<T> where T : EntidadeBase<T>
 {
     protected readonly DbSet<T> registros = dbContext.Set<T>();
     protected EAgendaDbContext DbContext { get; } = dbContext;
+    protected ILogger<RepositorioOrm<T>> Logger { get; } = logger;
 
     public bool Cadastrar(T registro)
     {
@@ -16,8 +17,9 @@ public class RepositorioOrm<T>(EAgendaDbContext dbContext) : IRepositorio<T> whe
             registros.Add(registro);
             DbContext.SaveChanges();
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Erro ao cadastrar {Registro}.", typeof(T).Name);
             return false;
         }
         return true;
@@ -36,8 +38,9 @@ public class RepositorioOrm<T>(EAgendaDbContext dbContext) : IRepositorio<T> whe
         {
             DbContext.SaveChanges();
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Erro ao editar {Registro}.", typeof(T).Name);
             return false;
         }
         return true;
@@ -55,8 +58,9 @@ public class RepositorioOrm<T>(EAgendaDbContext dbContext) : IRepositorio<T> whe
             registros.Remove(registro);
             DbContext.SaveChanges();
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Erro ao excluir {Registro}.", typeof(T).Name);
             return false;
         }
 
@@ -65,5 +69,5 @@ public class RepositorioOrm<T>(EAgendaDbContext dbContext) : IRepositorio<T> whe
 
     public virtual T? Selecionar(Guid id) => registros.SingleOrDefault(r => r.Id == id);
 
-    public virtual List<T> Selecionar(Func<T, bool>? filtro = null) => [.. registros.Where(filtro ?? (_ => true))];
+    public virtual List<T> Selecionar(Expression<Func<T, bool>>? filtro = null) => [.. registros.Where(filtro ?? (_ => true))];
 }

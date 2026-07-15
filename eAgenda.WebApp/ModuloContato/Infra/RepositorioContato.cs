@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
@@ -63,7 +64,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
         return QuerySingle(sqlQuery, id);
     }
 
-    public List<Contato> Selecionar(Func<Contato, bool>? filtro = null)
+    public List<Contato> Selecionar(Expression<Func<Contato, bool>>? filtro = null)
     {
         string sqlQuery = """
             SELECT Id, Nome, Email, Telefone, Cargo, Empresa 
@@ -71,7 +72,7 @@ public class RepositorioContato : RepositorioSql<Contato, Contato>, IRepositorio
             ORDER BY Nome;
         """;
 
-        return [.. Query(sqlQuery).Where(filtro ?? (t => true))];
+        return [.. Query(sqlQuery).Where(filtro?.Compile() ?? (t => true))];
     }
 
     public bool PossuiCompromissos(Guid id)

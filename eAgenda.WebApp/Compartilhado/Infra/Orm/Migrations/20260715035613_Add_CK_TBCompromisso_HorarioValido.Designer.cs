@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eAgenda.WebApp.Compartilhado.Infra.Orm;
 
@@ -11,9 +12,11 @@ using eAgenda.WebApp.Compartilhado.Infra.Orm;
 namespace eAgenda.WebApp.Compartilhado.Infra.Orm.Migrations
 {
     [DbContext(typeof(EAgendaDbContext))]
-    partial class EAgendaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260715035613_Add_CK_TBCompromisso_HorarioValido")]
+    partial class Add_CK_TBCompromisso_HorarioValido
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

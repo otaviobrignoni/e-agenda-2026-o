@@ -20,12 +20,10 @@ public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositori
         var item = mapper.MapWith<ItemTarefa>(dto, (nameof(ItemTarefa.Tarefa), tarefa));
 
         tarefa.AdicionarItem(item);
+        tarefa.AtualizarDataConclusao();
 
         if (!repositorioItemTarefa.Cadastrar(item))
             return Result.Fail("Não foi possível adicionar o item.");
-
-        if (!repositorioTarefa.AtualizarDataConclusao(tarefa))
-            return Result.Fail("Não foi possível atualizar a tarefa.");
 
         return Result.Ok();
     }
@@ -43,12 +41,10 @@ public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositori
             return Result.Fail("Item da tarefa não encontrado.");
 
         tarefa.RemoverItem(item);
+        tarefa.AtualizarDataConclusao();
 
         if (!repositorioItemTarefa.Excluir(item))
             return Result.Fail("Não foi possível remover o item.");
-
-        if (!repositorioTarefa.AtualizarDataConclusao(tarefa))
-            return Result.Fail("Não foi possível atualizar a tarefa.");
 
         return Result.Ok();
     }
@@ -89,11 +85,10 @@ public class ServicoItemTarefa(IRepositorioTarefa repositorioTarefa, IRepositori
             itensEditados.Add(item);
         }
 
+        tarefa.AtualizarDataConclusao();
+
         if (!repositorioItemTarefa.Editar(itensExcluidos, itensAdicionados, itensEditados))
             return Result.Fail("Não foi possível atualizar os itens da tarefa.");
-
-        if (!repositorioTarefa.AtualizarDataConclusao(tarefa))
-            return Result.Fail("Não foi possível atualizar a tarefa.");
 
         return Result.Ok();
     }

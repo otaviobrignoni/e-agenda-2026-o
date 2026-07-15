@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
@@ -77,7 +78,7 @@ public class RepositorioCompromisso(ISqlConnectionFactory connectionFactory, IMa
         return QuerySingle(sqlQuery, id);
     }
 
-    public List<Compromisso> Selecionar(Func<Compromisso, bool>? filtro = null)
+    public List<Compromisso> Selecionar(Expression<Func<Compromisso, bool>>? filtro = null)
     {
         string sqlQuery = """
             SELECT
@@ -100,7 +101,7 @@ public class RepositorioCompromisso(ISqlConnectionFactory connectionFactory, IMa
             ORDER BY compromisso.Assunto;
         """;
 
-        return [.. Query(sqlQuery).Where(filtro ?? (_ => true))];
+        return [.. Query(sqlQuery).Where(filtro?.Compile() ?? (_ => true))];
     }
 }
 

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
@@ -58,7 +59,7 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
         return tarefa;
     }
 
-    public List<Tarefa> Selecionar(Func<Tarefa, bool>? filtro = null)
+    public List<Tarefa> Selecionar(Expression<Func<Tarefa, bool>>? filtro = null)
     {
         string sqlQuery = """
             SELECT Id, Titulo, Prioridade, DataCriacao, DataConclusao
@@ -66,7 +67,7 @@ public class RepositorioTarefa(ISqlConnectionFactory connectionFactory, IMapper 
             ORDER BY Titulo;
         """;
 
-        var tarefas = Query(sqlQuery).Where(filtro ?? (t => true)).ToList();
+        var tarefas = Query(sqlQuery).Where(filtro?.Compile() ?? (t => true)).ToList();
 
         foreach (var tarefa in tarefas)
             tarefa.Itens = repositorioItemTarefa.Selecionar(tarefa);

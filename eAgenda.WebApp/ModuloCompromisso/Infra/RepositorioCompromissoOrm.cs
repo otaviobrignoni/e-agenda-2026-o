@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using eAgenda.WebApp.Compartilhado.Infra.Orm;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloCompromisso.Dominio;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.WebApp.ModuloCompromisso.Infra;
 
-public class RepositorioCompromissoOrm(EAgendaDbContext dbContext) : RepositorioOrm<Compromisso>(dbContext), IRepositorioCompromisso
+public class RepositorioCompromissoOrm(EAgendaDbContext dbContext, ILogger<RepositorioOrm<Compromisso>> logger) : RepositorioOrm<Compromisso>(dbContext, logger), IRepositorioCompromisso
 {
     public override Compromisso? Selecionar(Guid id)
     {
@@ -13,7 +14,7 @@ public class RepositorioCompromissoOrm(EAgendaDbContext dbContext) : Repositorio
             .Include(c => c.Contato)
             .SingleOrDefault(c => c.Id == id);
     }
-    public override List<Compromisso> Selecionar(Func<Compromisso, bool>? filtro = null)
+    public override List<Compromisso> Selecionar(Expression<Func<Compromisso, bool>>? filtro = null)
     {
         return [..
             registros

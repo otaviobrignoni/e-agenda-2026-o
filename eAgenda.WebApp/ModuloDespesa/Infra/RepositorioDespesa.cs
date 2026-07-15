@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
@@ -90,7 +91,7 @@ public class RepositorioDespesa(ISqlConnectionFactory connectionFactory, IMapper
         return despesa;
     }
 
-    public List<Despesa> Selecionar(Func<Despesa, bool>? filtro = null)
+    public List<Despesa> Selecionar(Expression<Func<Despesa, bool>>? filtro = null)
     {
         string sqlQuery = """
             SELECT Id, Descricao, Data, Valor, FormaPagamento
@@ -103,7 +104,7 @@ public class RepositorioDespesa(ISqlConnectionFactory connectionFactory, IMapper
         foreach (var despesa in despesas)
             despesa.Categorias = SelecionarCategorias(despesa.Id);
 
-        return [.. despesas.Where(filtro ?? (_ => true))];
+        return [.. despesas.Where(filtro?.Compile() ?? (_ => true))];
     }
 
     private List<Categoria> SelecionarCategorias(Guid despesaId)

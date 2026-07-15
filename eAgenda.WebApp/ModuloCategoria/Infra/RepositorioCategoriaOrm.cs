@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using eAgenda.WebApp.Compartilhado.Infra.Orm;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
 using eAgenda.WebApp.ModuloCategoria.Dominio;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.WebApp.ModuloCategoria.Infra;
 
-public class RepositorioCategoriaOrm(EAgendaDbContext dbContext) : RepositorioOrm<Categoria>(dbContext), IRepositorioCategoria
+public class RepositorioCategoriaOrm(EAgendaDbContext dbContext, ILogger<RepositorioOrm<Categoria>> logger) : RepositorioOrm<Categoria>(dbContext, logger), IRepositorioCategoria
 {
     public bool PossuiDespesas(Guid id)
     {
@@ -21,14 +22,12 @@ public class RepositorioCategoriaOrm(EAgendaDbContext dbContext) : RepositorioOr
     {
         return registros
             .Include(c => c.Despesas)
-            .ThenInclude(d => d.Categorias)
             .SingleOrDefault(c => c.Id == id);
     }
-    public override List<Categoria> Selecionar(Func<Categoria, bool>? filtro = null)
+    public override List<Categoria> Selecionar(Expression<Func<Categoria, bool>>? filtro = null)
     {
         return [.. registros
             .Include(c=> c.Despesas)
-            .ThenInclude(d => d.Categorias)
             .Where(filtro ?? (_ => true))
             .OrderBy(c=> c.Titulo)
         ];

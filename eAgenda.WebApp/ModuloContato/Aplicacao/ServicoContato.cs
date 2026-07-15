@@ -49,4 +49,12 @@ public class ServicoContato(IRepositorioContato repositorioContato, IMapper mapp
             return Result.Fail("Contato não encontrado.");
         return Result.Ok();
     }
+
+    public override Result Excluir(Guid id)
+    {
+        if (repositorioContato.PossuiCompromissos(id))
+            return Result.Fail("O contato está vinculado a um ou mais compromissos.");
+
+        return base.Excluir(id);
+    }
 }

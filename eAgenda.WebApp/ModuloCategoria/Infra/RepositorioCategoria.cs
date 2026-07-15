@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.ModuloBase;
@@ -52,7 +53,7 @@ public class RepositorioCategoria(ISqlConnectionFactory connectionFactory, IMapp
         return QuerySingle(sqlQuery, id);
     }
 
-    public List<Categoria> Selecionar(Func<Categoria, bool>? filtro = null)
+    public List<Categoria> Selecionar(Expression<Func<Categoria, bool>>? filtro = null)
     {
         string sqlQuery = """
             SELECT Id, Titulo
@@ -60,7 +61,7 @@ public class RepositorioCategoria(ISqlConnectionFactory connectionFactory, IMapp
             ORDER BY Titulo;
         """;
 
-        return [.. Query(sqlQuery).Where(filtro ?? (t => true))];
+        return [.. Query(sqlQuery).Where(filtro?.Compile() ?? (t => true))];
     }
 
     public List<Categoria> Selecionar(IEnumerable<Guid> ids)
