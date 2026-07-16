@@ -4,7 +4,7 @@ namespace eAgenda.WebApp.Compartilhado.Infra.Sql;
 
 public sealed class SqlConnectionFactory(IConfiguration config) : ISqlConnectionFactory
 {
-    private const string NomeConnectionString = "eAgenda";
+    private const string NomeConnectionString = "SqlServerDapper";
 
     public SqlConnection CreateConnection()
     {

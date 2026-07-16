@@ -1,3 +1,4 @@
+using eAgenda.WebApp.Compartilhado.Infra;
 using eAgenda.WebApp.Compartilhado.Infra.Orm;
 using eAgenda.WebApp.Compartilhado.Infra.Sql;
 using eAgenda.WebApp.Compartilhado.Logging;
@@ -55,9 +56,35 @@ public static class InjecaoDependencia
     // Camada de Infraestrutura
     public static void AddRepositoriesConfig(this IServiceCollection services, IConfiguration config)
     {
+        string? value = config["Infra:TipoPersistencia"];
+
+        string enumValues = string.Join(", ", Enum.GetNames<TipoPersistencia>());
+
+        string notValidMsg = $"'{value}' não é um tipo de persistência válido. Valores aceitos: {enumValues}.";
+
+        string notFoundMsg = $"Chave \"Infra:TipoPersistencia\" não encontrada.";
+
+        if (Enum.TryParse(value, true, out TipoPersistencia tipo))
+            switch (tipo)
+            {
+                case TipoPersistencia.EFCore:
+                    AddEFCoreConfig(services, config);
+                    break;
+                case TipoPersistencia.Dapper:
+                    AddDapperConfig(services);
+                    break;
+                default:
+                    throw new InvalidOperationException(notValidMsg);
+            }
+        else
+            throw new InvalidOperationException(notFoundMsg);
+    }
+
+    public static void AddEFCoreConfig(IServiceCollection services, IConfiguration config)
+    {
         services.AddDbContext<EAgendaDbContext>(options =>
         {
-            string connectionStringName = "eAgendaOrm";
+            string connectionStringName = "SqlServerEFCore";
             string? connectionString = config.GetConnectionString(connectionStringName);
 
             if (string.IsNullOrEmpty(connectionString))
@@ -66,16 +93,27 @@ public static class InjecaoDependencia
             options.UseSqlServer(connectionString);
         });
 
-        services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
-        services.AddScoped<IRepositorioGenerico, RepositorioGenerico>();
-
-        //services.AddScoped<IRepositorio(*), Repositorio(*)>();
+        //services.AddScoped<IRepositorio(*), Repositorio(*)Orm>();
         services.AddScoped<IRepositorioTarefa, RepositorioTarefaOrm>();
         services.AddScoped<IRepositorioItemTarefa, RepositorioItemTarefaOrm>();
         services.AddScoped<IRepositorioCategoria, RepositorioCategoriaOrm>();
         services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
         services.AddScoped<IRepositorioDespesa, RepositorioDespesaOrm>();
         services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoOrm>();
+    }
+
+    public static void AddDapperConfig(IServiceCollection services)
+    {
+        services.AddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
+        services.AddScoped<IRepositorioGenerico, RepositorioGenerico>();
+
+        //services.AddScoped<IRepositorio(*), Repositorio(*)>();
+        services.AddScoped<IRepositorioTarefa, RepositorioTarefa>();
+        services.AddScoped<IRepositorioItemTarefa, RepositorioItemTarefa>();
+        services.AddScoped<IRepositorioCategoria, RepositorioCategoria>();
+        services.AddScoped<IRepositorioContato, RepositorioContato>();
+        services.AddScoped<IRepositorioDespesa, RepositorioDespesa>();
+        services.AddScoped<IRepositorioCompromisso, RepositorioCompromisso>();
     }
 
     // Camada de Aplicação
