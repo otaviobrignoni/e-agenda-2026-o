@@ -55,6 +55,18 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_40CE93D76A454590B38B741911C4721C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C2DDCABF300247B48DD1435FE472BA4F }}
 
+      - name: Configure Azure Web App settings
+        shell: pwsh
+        run: |
+          az webapp config appsettings set `
+            --resource-group "e-agenda" `
+            --name "eAgenda-o" `
+            --settings `
+              "ASPNETCORE_ENVIRONMENT=Production" `
+              "ConnectionStrings__SqlServerEFCore=${{ secrets.AZURE_SQL_CONNECTION_STRING }}" `
+              "Logging__NewRelic__LicenseKey=${{ secrets.NEWRELIC_LICENSE_KEY }}" `
+              "AutoMapper__LicenseKey=${{ secrets.AUTOMAPPER_LICENSE_KEY }}"
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
