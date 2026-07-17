@@ -90,7 +90,7 @@ public static class InjecaoDependencia
             if (string.IsNullOrEmpty(connectionString))
                 throw new InvalidOperationException($"ConnectionString \"{connectionStringName}\" não encontrada");
 
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString, opt => opt.EnableRetryOnFailure(3));
         });
 
         //services.AddScoped<IRepositorio(*), Repositorio(*)Orm>();
